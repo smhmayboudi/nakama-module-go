@@ -1,0 +1,77 @@
+api:
+  address: 0.0.0.0:8686
+  enabled: true
+  playground: true
+data_dir: /var/lib/vector
+sinks:
+  kafka_out:
+    # acknowledgements:
+    #   enable: true
+    # batch: null
+    # buffer: null
+    bootstrap_servers: redpanda:29092
+    # compression: none
+    encoding:
+      codec: json
+    group_id: vector-logs
+    # headers_key: headers
+    # healthcheck:
+    #   enable: true
+    inputs:
+      - json_parse
+    key_field: user
+    # librdkafka_options:
+    # message_timeout_ms: 300000
+    # sasl: null
+    # socket_timeout_ms: 60000
+    topic: chat-room-vector
+    type: kafka
+sources:
+  kafka_in:
+    # acknowledgements:
+    #   enable: true
+    # auto_offset_reset: largest
+    bootstrap_servers: redpanda:29092
+    # commit_interval_ms: 5000
+    decoding:
+      codec: json
+    # fetch_wait_max_ms: 100
+    # framing:
+    #   character_delimited:
+    #     delimiter: \n
+    #     max_length: 65535
+    #   method: bytes
+    #   newline_delimited:
+    #     max_length: 65535
+    #   octet_counting:
+    #     max_length: 65535
+    group_id: vector-logs
+    # headers_key: headers
+    key_field: user
+    # librdkafka_options:
+    # offset_key: offset
+    # partition_key: partition
+    # sasl: null
+    # session_timeout_ms: 10000
+    # socket_timeout_ms: 60000
+    # topic_key: topic
+    topics:
+      - chat-room
+    type: kafka
+transforms:
+  json_parse:
+    # drop_on_abort: true
+    # drop_on_error: false
+    # file: ./my/program.vrl
+    inputs:
+      - kafka_in
+    # reroute_dropped: false
+    source: |-
+      parsed, err = parse_json(.message)
+      if err != null {
+        log(err, level: "error")
+      }
+      . |= object(parsed) ?? {}
+      .new_field = "new value"
+    # timezone: local
+    type: remap

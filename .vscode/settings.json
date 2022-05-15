@@ -1,0 +1,15 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "127.0.0.1",
+      "port": 26257,
+      "driver": "PostgreSQL",
+      "name": "cockroach",
+      "group": "nakama",
+      "database": "nakama",
+      "username": "root",
+      "password": ""
+    }
+  ]
+}
