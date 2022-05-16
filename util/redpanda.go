@@ -146,12 +146,12 @@ func Redpanda(ctx context.Context, logger runtime.Logger, payload map[string]int
 		Username:       username,
 		Vars:           vars,
 	}
-	textMapCarrier := NewTextMapCarrier(ctx)
 	dataKey := &DataKey{
 		Node: node,
 	}
+	b3 := InjectSingleField(ctx)["b3"].(string)
 	dataValue := &DataValue{
-		B3:      textMapCarrier.B3,
+		B3:      b3,
 		Context: *nakamaContext,
 		Payload: payload,
 	}
@@ -167,8 +167,7 @@ func Redpanda(ctx context.Context, logger runtime.Logger, payload map[string]int
 	}
 	body, err := json.Marshal(records)
 	if err != nil {
-		textMapCarrier := NewTextMapCarrier(ctx)
-		logger.WithFields(textMapCarrier.MultipleField()).WithField("error", err).Error("Failed to marshaling to JSON")
+		logger.WithFields(InjectMultipleField(ctx)).WithField("error", err).Error("Failed to marshaling to JSON")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to marshaling to JSON")
 		return err
@@ -176,22 +175,20 @@ func Redpanda(ctx context.Context, logger runtime.Logger, payload map[string]int
 
 	req, err := http.NewRequestWithContext(context.Background(), "POST", "http://redpanda:8082/topics/nakama", bytes.NewReader(body))
 	if err != nil {
-		textMapCarrier := NewTextMapCarrier(ctx)
-		logger.WithFields(textMapCarrier.MultipleField()).WithField("error", err).Error("Failed to create request with context")
+		logger.WithFields(InjectMultipleField(ctx)).WithField("error", err).Error("Failed to create request with context")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to create request with context")
 		return err
 	}
 	req.Header.Add("Content-Type", "application/vnd.kafka.json.v2+json")
-	for k, v := range textMapCarrier.SingleField() {
+	for k, v := range InjectSingleField(ctx) {
 		req.Header.Add(k, v.(string))
 	}
 	// client := http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
 	client := http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		textMapCarrier := NewTextMapCarrier(ctx)
-		logger.WithFields(textMapCarrier.MultipleField()).WithField("error", err).Error("Failed to create http client")
+		logger.WithFields(InjectMultipleField(ctx)).WithField("error", err).Error("Failed to create http client")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to create http client")
 		return err

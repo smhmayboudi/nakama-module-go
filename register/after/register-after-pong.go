@@ -13,7 +13,7 @@ import (
 )
 
 func RegisterAfterPong(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out, in *rtapi.Envelope) error {
-	ctx = trace.ContextWithRemoteSpanContext(ctx, u.NewSpanContext(ctx))
+	ctx = u.Extract(ctx)
 	ctx, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,
 		"RegisterAfterPong",
@@ -21,8 +21,7 @@ func RegisterAfterPong(ctx context.Context, logger runtime.Logger, db *sql.DB, n
 	defer span.End()
 
 	if err := u.Redpanda(ctx, logger, map[string]interface{}{"name": "RegisterAfterPong", "out": out, "in": in}); err != nil {
-		textMapCarrier := u.NewTextMapCarrier(ctx)
-		logger.WithFields(textMapCarrier.MultipleField()).WithField("error", err).Error("Error calling redpanda")
+		logger.WithFields(u.InjectMultipleField(ctx)).WithField("error", err).Error("Error calling redpanda")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Error calling redpanda")
 		return err

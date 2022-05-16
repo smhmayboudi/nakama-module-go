@@ -13,7 +13,7 @@ import (
 )
 
 func RegisterLeaderboardReset(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, leaderboard *api.Leaderboard, reset int64) error {
-	ctx = trace.ContextWithRemoteSpanContext(ctx, u.NewSpanContext(ctx))
+	ctx = u.Extract(ctx)
 	ctx, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,
 		"RegisterLeaderboardReset",
@@ -21,8 +21,7 @@ func RegisterLeaderboardReset(ctx context.Context, logger runtime.Logger, db *sq
 	defer span.End()
 
 	if err := u.Redpanda(ctx, logger, map[string]interface{}{"name": "RegisterLeaderboardReset", "leaderboard": leaderboard, "reset": reset}); err != nil {
-		textMapCarrier := u.NewTextMapCarrier(ctx)
-		logger.WithFields(textMapCarrier.MultipleField()).WithField("error", err).Error("Error calling redpanda")
+		logger.WithFields(u.InjectMultipleField(ctx)).WithField("error", err).Error("Error calling redpanda")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Error calling redpanda")
 		return err

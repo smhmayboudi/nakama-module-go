@@ -56,8 +56,8 @@ func InitProvider(ctx context.Context, logger runtime.Logger) func() {
 	}
 	tp := sdkTrace.NewTracerProvider(
 		sdkTrace.WithBatcher(ej),
-		sdkTrace.WithBatcher(es),
 		sdkTrace.WithResource(r),
+		sdkTrace.WithSyncer(es),
 	)
 	otel.SetTracerProvider(tp)
 

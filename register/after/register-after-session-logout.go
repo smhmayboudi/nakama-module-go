@@ -13,7 +13,7 @@ import (
 )
 
 func RegisterAfterSessionLogout(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.SessionLogoutRequest) error {
-	ctx = trace.ContextWithRemoteSpanContext(ctx, u.NewSpanContext(ctx))
+	ctx = u.Extract(ctx)
 	ctx, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,
 		"RegisterAfterSessionLogout",
@@ -21,8 +21,7 @@ func RegisterAfterSessionLogout(ctx context.Context, logger runtime.Logger, db *
 	defer span.End()
 
 	if err := u.Redpanda(ctx, logger, map[string]interface{}{"name": "RegisterAfterSessionLogout", "in": in}); err != nil {
-		textMapCarrier := u.NewTextMapCarrier(ctx)
-		logger.WithFields(textMapCarrier.MultipleField()).WithField("error", err).Error("Error calling redpanda")
+		logger.WithFields(u.InjectMultipleField(ctx)).WithField("error", err).Error("Error calling redpanda")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Error calling redpanda")
 		return err

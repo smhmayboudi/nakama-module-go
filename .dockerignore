@@ -1,0 +1,7 @@
+.vscode/
+build/
+docker/
+script/
+.gitignore
+LICENSE
+README.md
