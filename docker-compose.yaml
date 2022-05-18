@@ -80,12 +80,12 @@ services:
   #   depends_on:
   #     materialized:
   #       condition: service_healthy
-  #   image: materialize/cli:v0.26.0
+  #   image: materialize/cli:v0.26.1
   #   labels:
   #     namespace: materialize-cli
   #   restart: "no"
   #   volumes:
-  #     - ./materialize-cli.sql:/materialize-cli.sql
+  #     - ./docker/materialize-cli.sql:/materialize-cli.sql:ro
 
   # # https://materialize.com/docs/cli/
   # materialized:
@@ -110,14 +110,14 @@ services:
   #     start_period: 5s
   #     test: curl -f http://materialized:6875
   #     timeout: 5s
-  #   image: materialize/materialized:v0.26.0
+  #   image: materialize/materialized:v0.26.1
   #   labels:
   #     namespace: materialized
   #   ports:
   #     - 6875:6875
   #   restart: "no"
   #   volumes:
-  #     # - ./materialized.yaml:/etc/materialized/config.yaml:ro
+  #     # - ./docker/materialized.yaml:/etc/materialized/config.yaml:ro
   #     - materialized:/mzdata
 
   nakama:
@@ -127,6 +127,8 @@ services:
         condition: service_healthy
       jaeger:
         condition: service_started
+      nakama-pluginbuilder:
+        condition: service_completed_successfully
       pgadmin4:
         condition: service_started
       redpanda:
@@ -160,9 +162,20 @@ services:
       - 9100:9100 # Prometheus
     restart: "no"
     volumes:
-      - ./nakama-modules-go/build:/nakama/data/modules:ro
-      - ./nakama.yaml:/etc/nakama/config.yaml:ro
+      - ./build:/nakama/data/modules:ro
+      - ./docker/nakama.yaml:/etc/nakama/config.yaml:ro
       - nakama:/nakama/data
+
+  nakama-pluginbuilder:
+    container_name: nakama-pluginbuilder
+    entrypoint: ./script/nakama-pluginbuilder.sh true
+    image: heroiclabs/nakama-pluginbuilder:3.11.0
+    labels:
+      namespace: nakama-pluginbuilder
+    restart: "no"
+    volumes:
+      - ./:/workspace
+    working_dir: /workspace
 
   # https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html
   pgadmin4:
@@ -190,8 +203,8 @@ services:
       - 5050:5050
     restart: "no"
     volumes:
-      - ./pgadmin4.json:/pgadmin4/servers.json:ro
-      - ./pgadmin4.pass:/pgadmin4/pass:ro
+      - ./docker/pgadmin4.json:/pgadmin4/servers.json:ro
+      - ./docker/pgadmin4.pass:/pgadmin4/pass:ro
 
   # https://docs.redpanda.com/docs/cluster-administration/configuration/
   redpanda:
@@ -236,7 +249,7 @@ services:
       - 9644:9644 # admin api
     restart: "no"
     volumes:
-      # - ./redpanda.yaml:/etc/redpanda/config.yaml:ro
+      # - ./docker/redpanda.yaml:/etc/redpanda/config.yaml:ro
       - redpanda:/var/lib/redpanda/data
 
   # # https://docs.redpanda.com/docs/cluster-administration/configuration/
@@ -258,14 +271,14 @@ services:
   #     start_period: 5s
   #     test: curl -f http://vector:8686/health
   #     timeout: 5s
-  #   image: timberio/vector:0.21.1-debian
+  #   image: timberio/vector:0.21.2-debian
   #   labels:
   #     namespace: vector
   #   ports:
   #     - 8686:8686
   #   restart: "no"
   #   volumes:
-  #     - ./vector.yaml:/etc/vector/config.yaml:ro
+  #     - ./docker/vector.yaml:/etc/vector/config.yaml:ro
   #     - vector:/var/lib/vector
 
 volumes:

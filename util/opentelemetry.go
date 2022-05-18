@@ -28,7 +28,7 @@ func InitProvider(ctx context.Context, logger runtime.Logger) func() {
 		rna,
 	)
 	if err != nil {
-		logger.Error("Failed to create resource: %v", err)
+		logger.Error("Failed to merge resources: %v", err)
 	}
 	rn, err := resource.New(
 		ctx,
@@ -39,12 +39,15 @@ func InitProvider(ctx context.Context, logger runtime.Logger) func() {
 		resource.WithOS(),
 		resource.WithProcess(),
 	)
+	if err != nil {
+		logger.Error("Failed to create a resource: %v", err)
+	}
 	r, err := resource.Merge(
 		rm,
 		rn,
 	)
 	if err != nil {
-		logger.Error("Failed to create resource: %v", err)
+		logger.Error("Failed to merge resources: %v", err)
 	}
 	ej, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(URL)))
 	if err != nil {

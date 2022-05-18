@@ -17,14 +17,22 @@ const (
 	b3TraceIDHeader      = "x-b3-traceid"
 )
 
-func mapper() map[string]string {
-	return map[string]string{
-		b3ContextHeader:      "b3",
-		b3DebugFlagHeader:    "flags",
-		b3ParentSpanIDHeader: "parent_span_id",
-		b3SampledHeader:      "sampled",
-		b3SpanIDHeader:       "span_id",
-		b3TraceIDHeader:      "trace_id",
+func mapper(key string) string {
+	switch key {
+	case b3ContextHeader:
+		return "b3"
+	case b3DebugFlagHeader:
+		return "flags"
+	case b3ParentSpanIDHeader:
+		return "parent_span_id"
+	case b3SampledHeader:
+		return "sampled"
+	case b3SpanIDHeader:
+		return "span_id"
+	case b3TraceIDHeader:
+		return "trace_id"
+	default:
+		return ""
 	}
 }
 
@@ -43,7 +51,7 @@ func InjectMultipleField(ctx context.Context) map[string]interface{} {
 	b3.Inject(ctx, propagation.MapCarrier(vars))
 	maps := make(map[string]interface{}, len(vars))
 	for k, v := range vars {
-		maps[mapper()[k]] = v
+		maps[mapper(k)] = v
 	}
 	return maps
 }
@@ -55,7 +63,7 @@ func InjectSingleField(ctx context.Context) map[string]interface{} {
 	b3.Inject(ctx, propagation.MapCarrier(vars))
 	maps := make(map[string]interface{}, len(vars))
 	for k, v := range vars {
-		maps[mapper()[k]] = v
+		maps[mapper(k)] = v
 	}
 	return maps
 }

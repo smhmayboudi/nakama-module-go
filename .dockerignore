@@ -3,5 +3,6 @@ build/
 docker/
 script/
 .gitignore
+docker-compose.yaml
 LICENSE
 README.md
