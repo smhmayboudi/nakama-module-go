@@ -32,34 +32,22 @@ func mapper(key string) string {
 	case b3TraceIDHeader:
 		return "trace_id"
 	default:
-		return ""
+		return key
 	}
 }
 
-func Extract(ctx context.Context) context.Context {
+func Extract(ctx context.Context, encoding b3.Encoding) context.Context {
 	vars, ok := ctx.Value(runtime.RUNTIME_CTX_VARS).(map[string]string)
 	if !ok {
 		vars = map[string]string{}
 	}
-	b3 := b3.New(b3.WithInjectEncoding(b3.B3MultipleHeader | b3.B3SingleHeader))
+	b3 := b3.New(b3.WithInjectEncoding(encoding))
 	return b3.Extract(ctx, propagation.MapCarrier(vars))
 }
 
-func InjectMultipleField(ctx context.Context) map[string]interface{} {
+func Inject(ctx context.Context, encoding b3.Encoding) map[string]interface{} {
 	vars := map[string]string{}
-	b3 := b3.New(b3.WithInjectEncoding(b3.B3MultipleHeader))
-	b3.Inject(ctx, propagation.MapCarrier(vars))
-	maps := make(map[string]interface{}, len(vars))
-	for k, v := range vars {
-		maps[mapper(k)] = v
-	}
-	return maps
-}
-
-func InjectSingleField(ctx context.Context) map[string]interface{} {
-	vars := map[string]string{}
-	b3 := b3.New(b3.WithInjectEncoding(b3.B3SingleHeader))
-	b3.Fields()
+	b3 := b3.New(b3.WithInjectEncoding(encoding))
 	b3.Inject(ctx, propagation.MapCarrier(vars))
 	maps := make(map[string]interface{}, len(vars))
 	for k, v := range vars {

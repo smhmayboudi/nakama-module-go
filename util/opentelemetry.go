@@ -49,7 +49,7 @@ func InitProvider(ctx context.Context, logger runtime.Logger) func() {
 	if err != nil {
 		logger.Error("Failed to merge resources: %v", err)
 	}
-	ej, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(URL)))
+	ej, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(JaegerURL)))
 	if err != nil {
 		logger.Error("Failed to create jaeger exporter: %v", err)
 	}

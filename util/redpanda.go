@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/heroiclabs/nakama-common/runtime"
+	"go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
@@ -37,9 +38,9 @@ type DataKey struct {
 }
 
 type DataValue struct {
-	B3      string                 `json:"b3,omitempty"`
-	Context NakamaContext          `json:"context,omitempty"`
-	Payload map[string]interface{} `json:"payload,omitempty"`
+	B3            string                 `json:"b3,omitempty"`
+	NakamaContext NakamaContext          `json:"context,omitempty"`
+	Payload       map[string]interface{} `json:"payload,omitempty"`
 }
 
 type Record struct {
@@ -52,7 +53,7 @@ type Records struct {
 	Records []Record `json:"records,omitempty"`
 }
 
-func Redpanda(ctx context.Context, logger runtime.Logger, payload map[string]interface{}) error {
+func Redpanda(ctx context.Context, logger runtime.Logger, payloadValue map[string]interface{}) error {
 	ctx, span := otel.Tracer(InstrumentationName).Start(
 		ctx,
 		"Redpanda",
@@ -127,7 +128,7 @@ func Redpanda(ctx context.Context, logger runtime.Logger, payload map[string]int
 	if !ok {
 		vars = map[string]string{}
 	}
-	nakamaContext := &NakamaContext{
+	nakamaContextValue := &NakamaContext{
 		ClientIp:       clientIp,
 		ClientSort:     clientSort,
 		Env:            env,
@@ -149,11 +150,11 @@ func Redpanda(ctx context.Context, logger runtime.Logger, payload map[string]int
 	dataKey := &DataKey{
 		Node: node,
 	}
-	b3 := InjectSingleField(ctx)["b3"].(string)
+	b3Value := Inject(ctx, b3.B3SingleHeader)["b3"].(string)
 	dataValue := &DataValue{
-		B3:      b3,
-		Context: *nakamaContext,
-		Payload: payload,
+		B3:            b3Value,
+		NakamaContext: *nakamaContextValue,
+		Payload:       payloadValue,
 	}
 	record := &Record{
 		Key:       *dataKey,
@@ -167,28 +168,28 @@ func Redpanda(ctx context.Context, logger runtime.Logger, payload map[string]int
 	}
 	body, err := json.Marshal(records)
 	if err != nil {
-		logger.WithFields(InjectMultipleField(ctx)).WithField("error", err).Error("Failed to marshaling to JSON")
+		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithField("error", err).Error("Failed to marshaling to JSON")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to marshaling to JSON")
 		return err
 	}
 
-	req, err := http.NewRequestWithContext(context.Background(), "POST", "http://redpanda:8082/topics/nakama", bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(context.Background(), "POST", RedpandaURL, bytes.NewReader(body))
 	if err != nil {
-		logger.WithFields(InjectMultipleField(ctx)).WithField("error", err).Error("Failed to create request with context")
+		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithField("error", err).Error("Failed to create request with context")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to create request with context")
 		return err
 	}
 	req.Header.Add("Content-Type", "application/vnd.kafka.json.v2+json")
-	for k, v := range InjectSingleField(ctx) {
+	for k, v := range Inject(ctx, b3.B3SingleHeader) {
 		req.Header.Add(k, v.(string))
 	}
 	// client := http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
 	client := http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		logger.WithFields(InjectMultipleField(ctx)).WithField("error", err).Error("Failed to create http client")
+		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithField("error", err).Error("Failed to create http client")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to create http client")
 		return err
