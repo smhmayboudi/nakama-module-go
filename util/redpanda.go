@@ -157,9 +157,8 @@ func Redpanda(ctx context.Context, logger runtime.Logger, payloadValue map[strin
 		Payload:       payloadValue,
 	}
 	record := &Record{
-		Key:       *dataKey,
-		Partition: 0,
-		Value:     *dataValue,
+		Key:   *dataKey,
+		Value: *dataValue,
 	}
 	items := make([]Record, 1)
 	items[0] = *record

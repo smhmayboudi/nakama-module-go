@@ -1,4 +1,3 @@
-// https://github.com/open-telemetry/opentelemetry-go/blob/main/example/otel-collector/main.go
 package util
 
 import (
