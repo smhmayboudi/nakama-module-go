@@ -5,10 +5,10 @@ import (
 	"database/sql"
 
 	"github.com/heroiclabs/nakama-common/runtime"
-	r "github.com/smhmayboudi/materialize-redpanda-vector/nakama-modules-go/register"
-	ra "github.com/smhmayboudi/materialize-redpanda-vector/nakama-modules-go/register/after"
-	rb "github.com/smhmayboudi/materialize-redpanda-vector/nakama-modules-go/register/before"
-	u "github.com/smhmayboudi/materialize-redpanda-vector/nakama-modules-go/util"
+	r "github.com/smhmayboudi/nakama-modules-go/register"
+	ra "github.com/smhmayboudi/nakama-modules-go/register/after"
+	rb "github.com/smhmayboudi/nakama-modules-go/register/before"
+	u "github.com/smhmayboudi/nakama-modules-go/util"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -75,7 +75,7 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 	if err := initializer.RegisterAfterDeleteLeaderboardRecord(ra.RegisterAfterDeleteLeaderboardRecord); err != nil {
 		return err
 	}
-	if err := initializer.RegisterAfterDeleteNotification(ra.RegisterAfterDeleteNotification); err != nil {
+	if err := initializer.RegisterAfterDeleteNotifications(ra.RegisterAfterDeleteNotifications); err != nil {
 		return err
 	}
 	if err := initializer.RegisterAfterDeleteStorageObjects(ra.RegisterAfterDeleteStorageObjects); err != nil {
@@ -289,7 +289,7 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 	if err := initializer.RegisterBeforeDeleteLeaderboardRecord(rb.RegisterBeforeDeleteLeaderboardRecord); err != nil {
 		return err
 	}
-	if err := initializer.RegisterBeforeDeleteNotification(rb.RegisterBeforeDeleteNotification); err != nil {
+	if err := initializer.RegisterBeforeDeleteNotifications(rb.RegisterBeforeDeleteNotifications); err != nil {
 		return err
 	}
 	if err := initializer.RegisterBeforeDeleteStorageObjects(rb.RegisterBeforeDeleteStorageObjects); err != nil {

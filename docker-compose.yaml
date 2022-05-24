@@ -20,7 +20,7 @@ services:
       start_period: 5s
       test: curl -f http://cockroach:8080/health
       timeout: 5s
-    image: cockroachdb/cockroach:v21.2.10
+    image: cockroachdb/cockroach:v21.2.11
     labels:
       namespace: cockroach
     ports:
@@ -33,6 +33,9 @@ services:
   jaeger:
     container_name: jaeger
     environment:
+      - LOG_LEVEL=debug
+      - COLLECTOR_ZIPKIN_ALLOWED_HEADERS=*
+      - COLLECTOR_ZIPKIN_ALLOWED_ORIGINS=*
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
     expose:
       - 5775/udp # accept zipkin.thrift over compact thrift protocol (deprecated, used by legacy clients only)
@@ -48,9 +51,9 @@ services:
       interval: 10s
       retries: 5
       start_period: 5s
-      test: curl -f http://jaeger:14269/metrics
+      test: curl -f http://jaeger:14269
       timeout: 5s
-    image: jaegertracing/all-in-one:1.34.0
+    image: jaegertracing/all-in-one:1.34.1
     labels:
       namespace: jaeger
     ports:
@@ -151,7 +154,7 @@ services:
       start_period: 5s
       test: curl -f http://nakama:7350
       timeout: 5s
-    image: heroiclabs/nakama:3.11.0
+    image: heroiclabs/nakama:3.12.0
     labels:
       namespace: nakama
     ports:
@@ -169,7 +172,7 @@ services:
   nakama-pluginbuilder:
     container_name: nakama-pluginbuilder
     entrypoint: ./script/nakama-pluginbuilder.sh true
-    image: heroiclabs/nakama-pluginbuilder:3.11.0
+    image: heroiclabs/nakama-pluginbuilder:3.12.0
     labels:
       namespace: nakama-pluginbuilder
     restart: "no"

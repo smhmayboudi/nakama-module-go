@@ -5,7 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/heroiclabs/nakama-common/runtime"
-	u "github.com/smhmayboudi/materialize-redpanda-vector/nakama-modules-go/util"
+	u "github.com/smhmayboudi/nakama-modules-go/util"
 	"go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
@@ -13,7 +13,7 @@ import (
 
 func RegisterBeforeGetAccount(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule) error {
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	ctx, span := otel.Tracer(u.InstrumentationName).Start(
+	_, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,
 		"RegisterBeforeGetAccount",
 		trace.WithSpanKind(trace.SpanKindInternal))

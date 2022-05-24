@@ -6,7 +6,7 @@ import (
 
 	"github.com/heroiclabs/nakama-common/rtapi"
 	"github.com/heroiclabs/nakama-common/runtime"
-	u "github.com/smhmayboudi/materialize-redpanda-vector/nakama-modules-go/util"
+	u "github.com/smhmayboudi/nakama-modules-go/util"
 	"go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
@@ -14,7 +14,7 @@ import (
 
 func RegisterBeforeMatchDataSend(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *rtapi.Envelope) (*rtapi.Envelope, error) {
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	ctx, span := otel.Tracer(u.InstrumentationName).Start(
+	_, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,
 		"RegisterBeforeMatchDataSend",
 		trace.WithSpanKind(trace.SpanKindInternal))

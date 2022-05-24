@@ -27,7 +27,7 @@ func InitProvider(ctx context.Context, logger runtime.Logger) func() {
 		rna,
 	)
 	if err != nil {
-		logger.Error("Failed to merge resources: %v", err)
+		logger.WithField("error", err).Error("Failed to merge resources")
 	}
 	rn, err := resource.New(
 		ctx,
@@ -39,22 +39,22 @@ func InitProvider(ctx context.Context, logger runtime.Logger) func() {
 		resource.WithProcess(),
 	)
 	if err != nil {
-		logger.Error("Failed to create a resource: %v", err)
+		logger.WithField("error", err).Error("Failed to create a resource")
 	}
 	r, err := resource.Merge(
 		rm,
 		rn,
 	)
 	if err != nil {
-		logger.Error("Failed to merge resources: %v", err)
+		logger.WithField("error", err).Error("Failed to merge resources")
 	}
 	ej, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(JaegerURL)))
 	if err != nil {
-		logger.Error("Failed to create jaeger exporter: %v", err)
+		logger.WithField("error", err).Error("Failed to create jaeger exporter")
 	}
 	es, err := stdouttrace.New()
 	if err != nil {
-		logger.Error("Failed to create stdouttrace exporter: %v", err)
+		logger.WithField("error", err).Error("Failed to create stdouttrace exporter")
 	}
 	tp := sdkTrace.NewTracerProvider(
 		sdkTrace.WithBatcher(ej),
@@ -70,7 +70,7 @@ func InitProvider(ctx context.Context, logger runtime.Logger) func() {
 			ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 			defer cancel()
 			if err := tp.Shutdown(ctx); err != nil {
-				logger.Error("Failed to shutdown tracer provider: %v", err)
+				logger.WithField("error", err).Error("Failed to shutdown tracer provider")
 			}
 		}(ctx)
 	}

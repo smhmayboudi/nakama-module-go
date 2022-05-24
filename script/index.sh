@@ -5,12 +5,12 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-# docker exec -it redpanda rpk topic create nakama --brokers=localhost:9092
-# docker exec -it redpanda rpk topic produce nakama --brokers=localhost:9092
-# docker exec -it redpanda rpk topic consume nakama --brokers=localhost:9092
+# docker-compose exec -it redpanda rpk topic create nakama --brokers=localhost:9092
+# docker-compose exec -it redpanda rpk topic produce nakama --brokers=localhost:9092
+# docker-compose exec -it redpanda rpk topic consume nakama --brokers=localhost:9092
 
 # [Help]()
-# docker exec -it redpanda redpanda --help
+# docker-compose exec -it redpanda redpanda --help
 
 # [Help](https://docs.redpanda.com/docs/reference/rpk-commands/)
 # docker exec -it redpanda rpk --help

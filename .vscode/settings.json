@@ -1,5 +1,7 @@
 {
+  "editor.tabSize": 2,
   "editor.inlineSuggest.enabled": true,
+  "go.toolsManagement.autoUpdate": true,
   "gopls": {
     "ui.semanticTokens": true
   },

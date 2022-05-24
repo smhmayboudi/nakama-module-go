@@ -17,8 +17,8 @@ OUTPUT=./${OUTPUT_DIR}/${OUTPUT_BIN}
 
 rm -fr ${OUTPUT}
 
-# go mod tidy
-# go mod vendor
+go mod tidy
+go mod vendor
 
 if ${DOCKER_COMPOSE}; then
 
@@ -42,7 +42,7 @@ COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker run \
   --tty \
   --volume $(pwd):/workspace \
   --workdir /workspace \
-  heroiclabs/nakama-pluginbuilder:3.11.0 build \
+  heroiclabs/nakama-pluginbuilder:3.12.0 build \
     -a \
     -buildmode plugin \
     -mod vendor \
