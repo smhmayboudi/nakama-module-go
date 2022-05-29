@@ -14,6 +14,7 @@ import (
 )
 
 func RegisterAfterGetAccount(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.Account) error {
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterAfterGetAccount", "out": out}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	ctx, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,

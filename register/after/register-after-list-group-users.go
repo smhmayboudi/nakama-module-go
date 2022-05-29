@@ -14,6 +14,7 @@ import (
 )
 
 func RegisterAfterListGroupUsers(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.GroupUserList, in *api.ListGroupUsersRequest) error {
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterAfterListGroupUsers", "in": in, "out": out}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	ctx, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,
@@ -21,7 +22,7 @@ func RegisterAfterListGroupUsers(ctx context.Context, logger runtime.Logger, db 
 		trace.WithSpanKind(trace.SpanKindInternal))
 	defer span.End()
 
-	if err := u.Redpanda(ctx, logger, map[string]interface{}{"name": "RegisterAfterListGroupUsers", "in": in}); err != nil {
+	if err := u.Redpanda(ctx, logger, map[string]interface{}{"name": "RegisterAfterListGroupUsers", "in": in, "out": out}); err != nil {
 		logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithField("error", err).Error("Error calling redpanda")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Error calling redpanda")

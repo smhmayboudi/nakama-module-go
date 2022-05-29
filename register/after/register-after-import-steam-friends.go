@@ -14,6 +14,7 @@ import (
 )
 
 func RegisterAfterImportSteamFriends(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ImportSteamFriendsRequest) error {
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterAfterImportSteamFriends", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	ctx, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,

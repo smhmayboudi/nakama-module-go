@@ -33,27 +33,28 @@ type NakamaContext struct {
 	Vars           map[string]string `json:"vars,omitempty"`
 }
 
-type DataKey struct {
+type Key struct {
 	Node string `json:"node,omitempty"`
 }
 
-type DataValue struct {
+type Value struct {
 	B3            string                 `json:"b3,omitempty"`
 	NakamaContext NakamaContext          `json:"context,omitempty"`
 	Payload       map[string]interface{} `json:"payload,omitempty"`
 }
 
 type Record struct {
-	Key       DataKey   `json:"key,omitempty"`
-	Partition int       `json:"partition,omitempty"`
-	Value     DataValue `json:"value,omitempty"`
+	Key       Key   `json:"key,omitempty"`
+	Partition int   `json:"partition,omitempty"`
+	Value     Value `json:"value,omitempty"`
 }
 
 type Records struct {
 	Records []Record `json:"records,omitempty"`
 }
 
-func Redpanda(ctx context.Context, logger runtime.Logger, payloadValue map[string]interface{}) error {
+func Redpanda(ctx context.Context, logger runtime.Logger, payload map[string]interface{}) error {
+	logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "Redpanda", "payload": payload}).Debug("")
 	ctx, span := otel.Tracer(InstrumentationName).Start(
 		ctx,
 		"Redpanda",
@@ -128,7 +129,7 @@ func Redpanda(ctx context.Context, logger runtime.Logger, payloadValue map[strin
 	if !ok {
 		vars = map[string]string{}
 	}
-	nakamaContextValue := &NakamaContext{
+	nakamaContext := &NakamaContext{
 		ClientIp:       clientIp,
 		ClientSort:     clientSort,
 		Env:            env,
@@ -147,18 +148,18 @@ func Redpanda(ctx context.Context, logger runtime.Logger, payloadValue map[strin
 		Username:       username,
 		Vars:           vars,
 	}
-	dataKey := &DataKey{
+	key := &Key{
 		Node: node,
 	}
-	b3Value := Inject(ctx, b3.B3SingleHeader)["b3"].(string)
-	dataValue := &DataValue{
-		B3:            b3Value,
-		NakamaContext: *nakamaContextValue,
-		Payload:       payloadValue,
+	b3V := Inject(ctx, b3.B3SingleHeader)["b3"].(string)
+	value := &Value{
+		B3:            b3V,
+		NakamaContext: *nakamaContext,
+		Payload:       payload,
 	}
 	record := &Record{
-		Key:   *dataKey,
-		Value: *dataValue,
+		Key:   *key,
+		Value: *value,
 	}
 	items := make([]Record, 1)
 	items[0] = *record

@@ -13,6 +13,7 @@ import (
 )
 
 func RegisterBeforeLinkFacebook(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.LinkFacebookRequest) (*api.LinkFacebookRequest, error) {
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterBeforeLinkFacebook", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	_, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,

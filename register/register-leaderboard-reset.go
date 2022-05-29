@@ -14,6 +14,7 @@ import (
 )
 
 func RegisterLeaderboardReset(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, leaderboard *api.Leaderboard, reset int64) error {
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterLeaderboardReset", "leaderboard": leaderboard, "reset": reset}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	ctx, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,

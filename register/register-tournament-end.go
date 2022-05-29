@@ -14,6 +14,7 @@ import (
 )
 
 func RegisterTournamentEnd(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, tournament *api.Tournament, end, reset int64) error {
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterTournamentEnd", "tournament": tournament, "end": end, "reset": reset}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	ctx, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,

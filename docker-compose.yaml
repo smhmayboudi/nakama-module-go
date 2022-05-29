@@ -25,7 +25,7 @@ services:
       namespace: cockroach
     ports:
       - 8080:8080
-      - 26257:26257
+      # - 26257:26257
     restart: "no"
     volumes:
       - cockroach:/var/lib/cockroach
@@ -51,21 +51,21 @@ services:
       interval: 10s
       retries: 5
       start_period: 5s
-      test: curl -f http://jaeger:14269
+      test: wget --no-verbose --tries=1 --spider http://jaeger:14269
       timeout: 5s
     image: jaegertracing/all-in-one:1.34.1
     labels:
       namespace: jaeger
     ports:
-      - 5775:5775/udp
-      - 6831:6831/udp
-      - 6832:6832/udp
-      - 5778:5778
+      # - 5775:5775/udp
+      # - 6831:6831/udp
+      # - 6832:6832/udp
+      # - 5778:5778
       - 16686:16686
-      - 14250:14250
-      - 14268:14268
-      - 14269:14269
-      - 9411:9411
+      # - 14268:14268
+      # - 14269:14269
+      # - 14250:14250
+      # - 9411:9411
     restart: "no"
 
   # materialize-cli:
@@ -83,7 +83,7 @@ services:
   #   depends_on:
   #     materialized:
   #       condition: service_healthy
-  #   image: materialize/cli:v0.26.1
+  #   image: materialize/cli:v0.26.2
   #   labels:
   #     namespace: materialize-cli
   #   restart: "no"
@@ -113,11 +113,11 @@ services:
   #     start_period: 5s
   #     test: curl -f http://materialized:6875
   #     timeout: 5s
-  #   image: materialize/materialized:v0.26.1
+  #   image: materialize/materialized:v0.26.2
   #   labels:
   #     namespace: materialized
-  #   ports:
-  #     - 6875:6875
+  #   # ports:
+  #   #   - 6875:6875
   #   restart: "no"
   #   volumes:
   #     # - ./docker/materialized.yaml:/etc/materialized/config.yaml:ro
@@ -129,11 +129,13 @@ services:
       cockroach:
         condition: service_healthy
       jaeger:
-        condition: service_started
+        condition: service_healthy
       nakama-pluginbuilder:
         condition: service_completed_successfully
-      pgadmin4:
+      otelcol:
         condition: service_started
+      pgadmin4:
+        condition: service_healthy
       redpanda:
         condition: service_healthy
     entrypoint:
@@ -143,11 +145,11 @@ services:
         /nakama/nakama migrate up --database.address root@cockroach:26257 &&
         exec /nakama/nakama --config=/etc/nakama/config.yaml
     expose:
-      - 7348
-      - 7349
-      - 7350
-      - 7351
-      - 9100
+      - 7348 # gRPC API embedded developer
+      - 7349 # gRPC API
+      - 7350 # HTTP API
+      - 7351 # HTTP API embedded developer
+      - 9100 # Prometheus
     healthcheck:
       interval: 10s
       retries: 5
@@ -158,11 +160,11 @@ services:
     labels:
       namespace: nakama
     ports:
-      - 7348:7348 # gRPC API embedded developer
-      - 7349:7349 # gRPC API
-      - 7350:7350 # HTTP API
-      - 7351:7351 # HTTP API embedded developer
-      - 9100:9100 # Prometheus
+      - 7348:7348
+      - 7349:7349
+      - 7350:7350
+      - 7351:7351
+      # - 9100:9100
     restart: "no"
     volumes:
       - ./build:/nakama/data/modules:ro
@@ -179,6 +181,35 @@ services:
     volumes:
       - ./:/workspace
     working_dir: /workspace
+
+  otelcol:
+    command:
+      - --config=/etc/otelcol/config.yaml
+    container_name: otelcol
+    expose:
+      - 4317
+      - 4318
+      - 8888
+      - 14268
+      - 13133
+    # healthcheck:
+    #   interval: 10s
+    #   retries: 5
+    #   start_period: 5s
+    #   test: curl -f http://otelcol:13133
+    #   timeout: 5s
+    image: otel/opentelemetry-collector:0.52.0
+    labels:
+      namespace: otelcol
+    ports:
+      # - 4317:4317
+      - 4318:4318
+      # - 8888:8888
+      # - 14268:14268
+      # - 13133:13133
+    restart: unless-stopped
+    volumes:
+      - ./docker/otelcol.yaml:/etc/otelcol/config.yaml
 
   # https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html
   pgadmin4:
@@ -197,7 +228,7 @@ services:
       interval: 10s
       retries: 5
       start_period: 5s
-      test: curl -f http://pgadmin4:8080
+      test: wget --no-verbose --spider --tries=1 http://pgadmin4:5050
       timeout: 5s
     image: dpage/pgadmin4:6.9
     labels:
@@ -230,32 +261,32 @@ services:
       - --smp=1
     container_name: redpanda
     expose:
-      - 8081
-      - 8082
-      - 9092
-      - 29092
-      - 9644
+      - 8081 # schema registry api
+      - 8082 # panda proxy api
+      - 9092 # kafka api
+      - 29092 # CONNECT FROM APPS
+      - 9644 # admin api
     healthcheck:
       interval: 10s
       retries: 5
       start_period: 5s
       test: curl -f http://redpanda:8081/schemas/types
       timeout: 5s
-    image: vectorized/redpanda:v21.11.16
+    image: vectorized/redpanda:v22.1.3
     labels:
       namespace: redpanda
-    ports:
-      - 8081:8081 # schema registry api
-      - 8082:8082 # panda proxy api
-      - 9092:9092 # kafka api
-      - 29092:29092 # CONNECT FROM APPS
-      - 9644:9644 # admin api
+    # ports:
+    #   - 8081:8081
+    #   - 8082:8082
+    #   - 9092:9092
+    #   - 29092:29092
+    #   - 9644:9644
     restart: "no"
     volumes:
       # - ./docker/redpanda.yaml:/etc/redpanda/config.yaml:ro
       - redpanda:/var/lib/redpanda/data
 
-  # # https://docs.redpanda.com/docs/cluster-administration/configuration/
+  # https://docs.redpanda.com/docs/cluster-administration/configuration/
   # vector:
   #   command:
   #     - --color=never
@@ -277,8 +308,8 @@ services:
   #   image: timberio/vector:0.21.2-debian
   #   labels:
   #     namespace: vector
-  #   ports:
-  #     - 8686:8686
+  #   # ports:
+  #   #   - 8686:8686
   #   restart: "no"
   #   volumes:
   #     - ./docker/vector.yaml:/etc/vector/config.yaml:ro

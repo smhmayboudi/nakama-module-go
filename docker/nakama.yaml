@@ -21,17 +21,17 @@ database:
 #   blacklist_rank_cache:
 #   callback_queue_size: 65536
 #   callback_queue_workers: 8
-# logger:
-#   compress: gzip
-#   file: /nakama/data/logfile.log
-#   format: json
-#   level: info
-#   local_time:
-#   max_age:
-#   max_backups:
-#   max_size:
-#   rotation: false
-#   stdout: true
+logger:
+  # compress: gzip
+  # file: /nakama/data/logfile.log
+  # format: json
+  level: debug
+  # local_time:
+  # max_age:
+  # max_backups:
+  # max_size:
+  # rotation: false
+  # stdout: true
 # match:
 #   call_queue_size: 128
 #   deferred_queue_size: 128

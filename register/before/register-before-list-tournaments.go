@@ -13,6 +13,7 @@ import (
 )
 
 func RegisterBeforeListTournaments(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ListTournamentsRequest) (*api.ListTournamentsRequest, error) {
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterBeforeListTournaments", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	_, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,

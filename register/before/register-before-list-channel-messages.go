@@ -13,6 +13,7 @@ import (
 )
 
 func RegisterBeforeListChannelMessages(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ListChannelMessagesRequest) (*api.ListChannelMessagesRequest, error) {
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterBeforeListChannelMessages", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	_, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,

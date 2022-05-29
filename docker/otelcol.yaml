@@ -1,0 +1,43 @@
+exporters:
+  jaeger:
+    endpoint: jaeger:14250
+    tls:
+      insecure: true
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+    check_collector_pipeline:
+      enabled: false
+      exporter_failure_threshold: 5
+      interval: 5m
+    path: /
+receivers:
+  jaeger:
+    protocols:
+      thrift_http:
+        endpoint: 0.0.0.0:14268
+  otlp:
+    protocols:
+      http:
+        cors:
+          allowed_headers:
+            - "*"
+          allowed_origins:
+            - http://127.0.0.1:8090
+            - http://localhost:8090
+          max_age: 7200
+        endpoint: 0.0.0.0:4318
+service:
+  extensions:
+    - health_check
+  pipelines:
+    traces:
+      exporters:
+        - jaeger
+      processors: null
+      receivers:
+        - jaeger
+        - otlp
+  telemetry:
+    logs:
+      level: debug

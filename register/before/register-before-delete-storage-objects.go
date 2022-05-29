@@ -13,6 +13,7 @@ import (
 )
 
 func RegisterBeforeDeleteStorageObjects(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.DeleteStorageObjectsRequest) (*api.DeleteStorageObjectsRequest, error) {
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterBeforeDeleteStorageObjects", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	_, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,

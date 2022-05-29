@@ -13,6 +13,7 @@ import (
 )
 
 func RegisterBeforeListMatches(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ListMatchesRequest) (*api.ListMatchesRequest, error) {
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterBeforeListMatches", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	_, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,

@@ -14,6 +14,7 @@ import (
 )
 
 func RegisterEventSessionStart(ctx context.Context, logger runtime.Logger, evt *api.Event) {
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterEventSessionStart", "event": evt}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	ctx, span := otel.Tracer(u.InstrumentationName).Start(
 		ctx,
