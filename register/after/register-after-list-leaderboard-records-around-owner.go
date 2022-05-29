@@ -16,7 +16,7 @@ import (
 func RegisterAfterListLeaderboardRecordsAroundOwner(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.LeaderboardRecordList, in *api.ListLeaderboardRecordsAroundOwnerRequest) error {
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterAfterListLeaderboardRecordsAroundOwner", "in": in, "out": out}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	ctx, span := otel.Tracer(u.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.LoadConfig(logger).InstrumentationName).Start(
 		ctx,
 		"RegisterAfterListLeaderboardRecordsAroundOwner",
 		trace.WithSpanKind(trace.SpanKindInternal))

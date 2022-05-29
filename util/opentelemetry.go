@@ -17,10 +17,10 @@ import (
 func InitProvider(ctx context.Context, logger runtime.Logger) func() {
 	rna := resource.NewWithAttributes(
 		semconv.SchemaURL,
-		semconv.ServiceInstanceIDKey.String(ServiceInstanceId),
-		semconv.ServiceNameKey.String(ServiceName),
-		semconv.ServiceNamespaceKey.String(ServiceNamespace),
-		semconv.ServiceVersionKey.String(ServiceVersion),
+		semconv.ServiceInstanceIDKey.String(LoadConfig(logger).ServiceInstanceId),
+		semconv.ServiceNameKey.String(LoadConfig(logger).ServiceName),
+		semconv.ServiceNamespaceKey.String(LoadConfig(logger).ServiceNamespace),
+		semconv.ServiceVersionKey.String(LoadConfig(logger).ServiceVersion),
 	)
 	rm, err := resource.Merge(
 		resource.Default(),
@@ -48,7 +48,7 @@ func InitProvider(ctx context.Context, logger runtime.Logger) func() {
 	if err != nil {
 		logger.WithField("error", err).Error("Failed to merge resources")
 	}
-	ej, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(JaegerURL)))
+	ej, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(LoadConfig(logger).JaegerURL)))
 	if err != nil {
 		logger.WithField("error", err).Error("Failed to create jaeger exporter")
 	}

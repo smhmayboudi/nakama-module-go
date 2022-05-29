@@ -15,7 +15,7 @@ import (
 func RegisterBeforeKickGroupUsers(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.KickGroupUsersRequest) (*api.KickGroupUsersRequest, error) {
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterBeforeKickGroupUsers", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	_, span := otel.Tracer(u.InstrumentationName).Start(
+	_, span := otel.Tracer(u.LoadConfig(logger).InstrumentationName).Start(
 		ctx,
 		"RegisterBeforeKickGroupUsers",
 		trace.WithSpanKind(trace.SpanKindInternal))

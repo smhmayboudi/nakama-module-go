@@ -15,7 +15,7 @@ import (
 func RegisterBeforeListGroupUsers(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ListGroupUsersRequest) (*api.ListGroupUsersRequest, error) {
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterBeforeListGroupUsers", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	_, span := otel.Tracer(u.InstrumentationName).Start(
+	_, span := otel.Tracer(u.LoadConfig(logger).InstrumentationName).Start(
 		ctx,
 		"RegisterBeforeListGroupUsers",
 		trace.WithSpanKind(trace.SpanKindInternal))
