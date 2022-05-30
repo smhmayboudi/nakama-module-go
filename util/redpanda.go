@@ -13,34 +13,13 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-type NakamaContext struct {
-	ClientIp       string            `json:"client_ip,omitempty"`
-	ClientSort     string            `json:"client_port,omitempty"`
-	Env            map[string]string `json:"env,omitempty"`
-	ExecutionMode  string            `json:"execution_mode,omitempty"`
-	Headers        map[string]string `json:"headers,omitempty"`
-	Lang           string            `json:"lang,omitempty"`
-	MatchId        string            `json:"match_id,omitempty"`
-	MatchLabel     string            `json:"match_label,omitempty"`
-	MatchNode      string            `json:"match_node,omitempty"`
-	MatchTickRate  int               `json:"match_tick_rate,omitempty"`
-	Node           string            `json:"node,omitempty"`
-	QueryParams    map[string]string `json:"query_params,omitempty"`
-	SessionId      string            `json:"session_id,omitempty"`
-	UserId         string            `json:"user_id,omitempty"`
-	UserSessionExp int               `json:"user_session_exp,omitempty"`
-	Username       string            `json:"username,omitempty"`
-	Vars           map[string]string `json:"vars,omitempty"`
-}
-
 type Key struct {
 	Node string `json:"node,omitempty"`
 }
 
 type Value struct {
-	B3            string                 `json:"b3,omitempty"`
-	NakamaContext NakamaContext          `json:"context,omitempty"`
-	Payload       map[string]interface{} `json:"payload,omitempty"`
+	B3      string                 `json:"b3,omitempty"`
+	Payload map[string]interface{} `json:"payload,omitempty"`
 }
 
 type Record struct {
@@ -53,109 +32,22 @@ type Records struct {
 	Records []Record `json:"records,omitempty"`
 }
 
-func Redpanda(ctx context.Context, logger runtime.Logger, payload map[string]interface{}) error {
-	logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "Redpanda", "payload": payload}).Debug("")
-	ctx, span := otel.Tracer(LoadConfig(logger).InstrumentationName).Start(
+func RedpandaSend(ctx context.Context, logger runtime.Logger, payload map[string]interface{}) error {
+	nakamaContext := NewContext(ctx, logger)
+	logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RedpandaSend", "ctx": nakamaContext, "payload": payload}).Debug("")
+	ctx, span := otel.Tracer(AppConfig.InstrumentationName).Start(
 		ctx,
-		"Redpanda",
+		"RedpandaSend",
 		trace.WithSpanKind(trace.SpanKindProducer))
 	defer span.End()
 
-	clientIp, ok := ctx.Value(runtime.RUNTIME_CTX_CLIENT_IP).(string)
-	if !ok {
-		clientIp = ""
-	}
-	clientSort, ok := ctx.Value(runtime.RUNTIME_CTX_CLIENT_PORT).(string)
-	if !ok {
-		clientSort = ""
-	}
-	env, ok := ctx.Value(runtime.RUNTIME_CTX_ENV).(map[string]string)
-	if !ok {
-		env = map[string]string{}
-	}
-	executionMode, ok := ctx.Value(runtime.RUNTIME_CTX_MODE).(string)
-	if !ok {
-		executionMode = ""
-	}
-	headers, ok := ctx.Value(runtime.RUNTIME_CTX_HEADERS).(map[string]string)
-	if !ok {
-		headers = map[string]string{}
-	}
-	lang, ok := ctx.Value(runtime.RUNTIME_CTX_LANG).(string)
-	if !ok {
-		lang = ""
-	}
-	matchId, ok := ctx.Value(runtime.RUNTIME_CTX_MATCH_ID).(string)
-	if !ok {
-		matchId = ""
-	}
-	matchLabel, ok := ctx.Value(runtime.RUNTIME_CTX_MATCH_LABEL).(string)
-	if !ok {
-		matchLabel = ""
-	}
-	matchNode, ok := ctx.Value(runtime.RUNTIME_CTX_MATCH_NODE).(string)
-	if !ok {
-		matchNode = ""
-	}
-	matchTickRate, ok := ctx.Value(runtime.RUNTIME_CTX_MATCH_TICK_RATE).(int)
-	if !ok {
-		matchTickRate = 0
-	}
-	node, ok := ctx.Value(runtime.RUNTIME_CTX_NODE).(string)
-	if !ok {
-		node = ""
-	}
-	queryParams, ok := ctx.Value(runtime.RUNTIME_CTX_QUERY_PARAMS).(map[string]string)
-	if !ok {
-		queryParams = map[string]string{}
-	}
-	sessionId, ok := ctx.Value(runtime.RUNTIME_CTX_SESSION_ID).(string)
-	if !ok {
-		sessionId = ""
-	}
-	userId, ok := ctx.Value(runtime.RUNTIME_CTX_USER_ID).(string)
-	if !ok {
-		userId = ""
-	}
-	userSessionExp, ok := ctx.Value(runtime.RUNTIME_CTX_USER_SESSION_EXP).(int)
-	if !ok {
-		userSessionExp = 0
-	}
-	username, ok := ctx.Value(runtime.RUNTIME_CTX_USERNAME).(string)
-	if !ok {
-		userId = ""
-	}
-	vars, ok := ctx.Value(runtime.RUNTIME_CTX_VARS).(map[string]string)
-	if !ok {
-		vars = map[string]string{}
-	}
-	nakamaContext := &NakamaContext{
-		ClientIp:       clientIp,
-		ClientSort:     clientSort,
-		Env:            env,
-		ExecutionMode:  executionMode,
-		Headers:        headers,
-		Lang:           lang,
-		MatchId:        matchId,
-		MatchLabel:     matchLabel,
-		MatchNode:      matchNode,
-		MatchTickRate:  matchTickRate,
-		Node:           node,
-		QueryParams:    queryParams,
-		SessionId:      sessionId,
-		UserId:         userId,
-		UserSessionExp: userSessionExp,
-		Username:       username,
-		Vars:           vars,
-	}
 	key := &Key{
-		Node: node,
+		Node: nakamaContext.Node,
 	}
 	b3V := Inject(ctx, b3.B3SingleHeader)["b3"].(string)
 	value := &Value{
-		B3:            b3V,
-		NakamaContext: *nakamaContext,
-		Payload:       payload,
+		B3:      b3V,
+		Payload: payload,
 	}
 	record := &Record{
 		Key:   *key,
@@ -168,15 +60,15 @@ func Redpanda(ctx context.Context, logger runtime.Logger, payload map[string]int
 	}
 	body, err := json.Marshal(records)
 	if err != nil {
-		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithField("error", err).Error("Failed to marshaling to JSON")
+		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RedpandaSend", "ctx": nakamaContext}).WithField("error", err).Error("Failed to marshaling to JSON")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to marshaling to JSON")
 		return err
 	}
 
-	req, err := http.NewRequestWithContext(context.Background(), "POST", LoadConfig(logger).RedpandaURL, bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(context.Background(), "POST", AppConfig.RedpandaURL, bytes.NewReader(body))
 	if err != nil {
-		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithField("error", err).Error("Failed to create request with context")
+		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RedpandaSend", "ctx": nakamaContext}).WithField("error", err).Error("Failed to create request with context")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to create request with context")
 		return err
@@ -189,7 +81,7 @@ func Redpanda(ctx context.Context, logger runtime.Logger, payload map[string]int
 	client := http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithField("error", err).Error("Failed to create http client")
+		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RedpandaSend", "ctx": nakamaContext}).WithField("error", err).Error("Failed to create http client")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to create http client")
 		return err

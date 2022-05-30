@@ -67,6 +67,8 @@ services:
       # - 14250:14250
       # - 9411:9411
     restart: "no"
+    volumes:
+      - jaeger:/tmp
 
   # materialize-cli:
   #   entrypoint:
@@ -211,7 +213,7 @@ services:
       # - 13133:13133
     restart: unless-stopped
     volumes:
-      - ./docker/otelcol.yaml:/etc/otelcol/config.yaml
+      - ./docker/otelcol.yaml:/etc/otelcol/config.yaml:ro
 
   # https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html
   pgadmin4:
@@ -241,6 +243,7 @@ services:
     volumes:
       - ./docker/pgadmin4.json:/pgadmin4/servers.json:ro
       - ./docker/pgadmin4.pass:/pgadmin4/pass:ro
+      - pgadmin:/var/lib/pgadmin
 
   # https://docs.redpanda.com/docs/cluster-administration/configuration/
   redpanda:
@@ -319,7 +322,9 @@ services:
 
 volumes:
   cockroach:
+  jaeger:
   # materialized:
   nakama:
+  pgadmin:
   redpanda:
   # vector:

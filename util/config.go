@@ -1,6 +1,8 @@
 package util
 
 import (
+	"context"
+
 	"github.com/heroiclabs/nakama-common/runtime"
 	"github.com/kelseyhightower/envconfig"
 )
@@ -15,10 +17,11 @@ type Config struct {
 	ServiceVersion      string `default:"v0.1.0" json:"service_version,omitempty" required:"true" split_words:"true"`
 }
 
-func LoadConfig(logger runtime.Logger) *Config {
-	var config Config
-	if err := envconfig.Process("", &config); err != nil {
-		logger.WithField("error", err).Error("Failed to process environment variables")
+var AppConfig Config
+
+func NewConfig(ctx context.Context, logger runtime.Logger) {
+	nakamaContext := NewContext(ctx, logger)
+	if err := envconfig.Process("", &AppConfig); err != nil {
+		logger.WithFields(map[string]interface{}{"name": "NewConfig", "ctx": nakamaContext}).WithField("error", err).Error("Failed to process environment variables")
 	}
-	return &config
 }

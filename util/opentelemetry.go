@@ -14,20 +14,21 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.10.0"
 )
 
-func InitProvider(ctx context.Context, logger runtime.Logger) func() {
+func NewOpenTelemetry(ctx context.Context, logger runtime.Logger) func() {
+	nakamaContext := NewContext(ctx, logger)
 	rna := resource.NewWithAttributes(
 		semconv.SchemaURL,
-		semconv.ServiceInstanceIDKey.String(LoadConfig(logger).ServiceInstanceId),
-		semconv.ServiceNameKey.String(LoadConfig(logger).ServiceName),
-		semconv.ServiceNamespaceKey.String(LoadConfig(logger).ServiceNamespace),
-		semconv.ServiceVersionKey.String(LoadConfig(logger).ServiceVersion),
+		semconv.ServiceInstanceIDKey.String(AppConfig.ServiceInstanceId),
+		semconv.ServiceNameKey.String(AppConfig.ServiceName),
+		semconv.ServiceNamespaceKey.String(AppConfig.ServiceNamespace),
+		semconv.ServiceVersionKey.String(AppConfig.ServiceVersion),
 	)
 	rm, err := resource.Merge(
 		resource.Default(),
 		rna,
 	)
 	if err != nil {
-		logger.WithField("error", err).Error("Failed to merge resources")
+		logger.WithFields(map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}).WithField("error", err).Error("Failed to merge resources")
 	}
 	rn, err := resource.New(
 		ctx,
@@ -39,22 +40,22 @@ func InitProvider(ctx context.Context, logger runtime.Logger) func() {
 		resource.WithProcess(),
 	)
 	if err != nil {
-		logger.WithField("error", err).Error("Failed to create a resource")
+		logger.WithFields(map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}).WithField("error", err).Error("Failed to create a resource")
 	}
 	r, err := resource.Merge(
 		rm,
 		rn,
 	)
 	if err != nil {
-		logger.WithField("error", err).Error("Failed to merge resources")
+		logger.WithFields(map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}).WithField("error", err).Error("Failed to merge resources")
 	}
-	ej, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(LoadConfig(logger).JaegerURL)))
+	ej, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(AppConfig.JaegerURL)))
 	if err != nil {
-		logger.WithField("error", err).Error("Failed to create jaeger exporter")
+		logger.WithFields(map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}).WithField("error", err).Error("Failed to create jaeger exporter")
 	}
 	es, err := stdouttrace.New()
 	if err != nil {
-		logger.WithField("error", err).Error("Failed to create stdouttrace exporter")
+		logger.WithFields(map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}).WithField("error", err).Error("Failed to create stdouttrace exporter")
 	}
 	tp := sdkTrace.NewTracerProvider(
 		sdkTrace.WithBatcher(ej),
@@ -70,7 +71,7 @@ func InitProvider(ctx context.Context, logger runtime.Logger) func() {
 			ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 			defer cancel()
 			if err := tp.Shutdown(ctx); err != nil {
-				logger.WithField("error", err).Error("Failed to shutdown tracer provider")
+				logger.WithFields(map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}).WithField("error", err).Error("Failed to shutdown tracer provider")
 			}
 		}(ctx)
 	}

@@ -9,16 +9,23 @@ import (
 	ra "github.com/smhmayboudi/nakama-modules-go/register/after"
 	rb "github.com/smhmayboudi/nakama-modules-go/register/before"
 	u "github.com/smhmayboudi/nakama-modules-go/util"
+	"go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 )
 
 func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, initializer runtime.Initializer) error {
-	u.InitProvider(ctx, logger)
-	// shutdown := u.InitProvider(ctx, logger)
+	u.NewConfig(ctx, logger)
+
+	u.NewOpenTelemetry(ctx, logger)
+	// shutdown := u.NewOpenTelemetry(ctx, logger)
 	// defer shutdown()
 
-	ctx, span := otel.Tracer(u.LoadConfig(logger).InstrumentationName).Start(
+	ctx = u.Extract(ctx, b3.B3SingleHeader)
+	nakamaContext := u.NewContext(ctx, logger)
+	fields := map[string]interface{}{"name": "InitModule", "ctx": nakamaContext}
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
+	_, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
 		ctx,
 		"InitModule",
 		trace.WithSpanKind(trace.SpanKindInternal))

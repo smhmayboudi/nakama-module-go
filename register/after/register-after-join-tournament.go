@@ -14,19 +14,21 @@ import (
 )
 
 func RegisterAfterJoinTournament(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.JoinTournamentRequest) error {
-	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterAfterJoinTournament", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	ctx, span := otel.Tracer(u.LoadConfig(logger).InstrumentationName).Start(
+	nakamaContext := u.NewContext(ctx, logger)
+	fields := map[string]interface{}{"name": "RegisterAfterJoinTournament", "ctx": nakamaContext, "in": in}
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
+	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
 		ctx,
 		"RegisterAfterJoinTournament",
 		trace.WithSpanKind(trace.SpanKindInternal))
 	defer span.End()
 
-	if err := u.Redpanda(ctx, logger, map[string]interface{}{"name": "RegisterAfterJoinTournament", "in": in}); err != nil {
-		logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithField("error", err).Error("Error calling redpanda")
+	if err := u.RedpandaSend(ctx, logger, fields); err != nil {
+		logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).WithField("error", err).Error("Error calling redpanda")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Error calling redpanda")
-		return err
+		return u.InternalError
 	}
 	return nil
 }

@@ -9,21 +9,26 @@ import (
 	u "github.com/smhmayboudi/nakama-modules-go/util"
 	"go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
 
 func RegisterBeforeMatchLeave(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *rtapi.Envelope) (*rtapi.Envelope, error) {
-	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterBeforeMatchLeave", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	_, span := otel.Tracer(u.LoadConfig(logger).InstrumentationName).Start(
+	nakamaContext := u.NewContext(ctx, logger)
+	fields := map[string]interface{}{"name": "RegisterBeforeMatchLeave", "ctx": nakamaContext, "in": in}
+	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
+	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
 		ctx,
 		"RegisterBeforeMatchLeave",
 		trace.WithSpanKind(trace.SpanKindInternal))
 	defer span.End()
 
-	// if err := u.Redpanda(ctx, logger, map[string]interface{}{"name": "RegisterBeforeMatchLeave", "in": in}); err != nil {
-	// 	u.HandleError(ctx, logger, span, err, "Error calling redpanda")
-	// 	return in, err
-	// }
+	if err := u.RedpandaSend(ctx, logger, fields); err != nil {
+		logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).WithField("error", err).Error("Error calling redpanda")
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "Error calling redpanda")
+		return in, u.InternalError
+	}
 	return in, nil
 }
