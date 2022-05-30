@@ -16,7 +16,7 @@ import (
 func RegisterAfterCreateGroup(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.Group, in *api.CreateGroupRequest) error {
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterAfterCreateGroup", "in": in, "out": out}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	ctx, span := otel.Tracer(u.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.LoadConfig(logger).InstrumentationName).Start(
 		ctx,
 		"RegisterAfterCreateGroup",
 		trace.WithSpanKind(trace.SpanKindInternal))

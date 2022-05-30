@@ -15,7 +15,7 @@ import (
 func RegisterBeforeStatusUpdate(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *rtapi.Envelope) (*rtapi.Envelope, error) {
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterBeforeStatusUpdate", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	_, span := otel.Tracer(u.InstrumentationName).Start(
+	_, span := otel.Tracer(u.LoadConfig(logger).InstrumentationName).Start(
 		ctx,
 		"RegisterBeforeStatusUpdate",
 		trace.WithSpanKind(trace.SpanKindInternal))

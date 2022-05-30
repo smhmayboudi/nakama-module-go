@@ -55,7 +55,7 @@ type Records struct {
 
 func Redpanda(ctx context.Context, logger runtime.Logger, payload map[string]interface{}) error {
 	logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "Redpanda", "payload": payload}).Debug("")
-	ctx, span := otel.Tracer(InstrumentationName).Start(
+	ctx, span := otel.Tracer(LoadConfig(logger).InstrumentationName).Start(
 		ctx,
 		"Redpanda",
 		trace.WithSpanKind(trace.SpanKindProducer))
@@ -174,7 +174,7 @@ func Redpanda(ctx context.Context, logger runtime.Logger, payload map[string]int
 		return err
 	}
 
-	req, err := http.NewRequestWithContext(context.Background(), "POST", RedpandaURL, bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(context.Background(), "POST", LoadConfig(logger).RedpandaURL, bytes.NewReader(body))
 	if err != nil {
 		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithField("error", err).Error("Failed to create request with context")
 		span.RecordError(err)

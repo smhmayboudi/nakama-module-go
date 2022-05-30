@@ -16,7 +16,7 @@ import (
 func RegisterAfterLinkApple(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.AccountApple) error {
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterAfterLinkApple", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	ctx, span := otel.Tracer(u.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.LoadConfig(logger).InstrumentationName).Start(
 		ctx,
 		"RegisterAfterLinkApple",
 		trace.WithSpanKind(trace.SpanKindInternal))

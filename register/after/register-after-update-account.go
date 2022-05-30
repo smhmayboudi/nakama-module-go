@@ -16,7 +16,7 @@ import (
 func RegisterAfterUpdateAccount(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.UpdateAccountRequest) error {
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterAfterUpdateAccount", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	ctx, span := otel.Tracer(u.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.LoadConfig(logger).InstrumentationName).Start(
 		ctx,
 		"RegisterAfterUpdateAccount",
 		trace.WithSpanKind(trace.SpanKindInternal))

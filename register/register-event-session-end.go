@@ -16,7 +16,7 @@ import (
 func RegisterEventSessionEnd(ctx context.Context, logger runtime.Logger, evt *api.Event) {
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterEventSessionEnd", "event": evt}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	ctx, span := otel.Tracer(u.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.LoadConfig(logger).InstrumentationName).Start(
 		ctx,
 		"RegisterEventSessionEnd",
 		trace.WithSpanKind(trace.SpanKindInternal))

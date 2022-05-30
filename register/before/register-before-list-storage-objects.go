@@ -15,7 +15,7 @@ import (
 func RegisterBeforeListStorageObjects(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ListStorageObjectsRequest) (*api.ListStorageObjectsRequest, error) {
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterBeforeListStorageObjects", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	_, span := otel.Tracer(u.InstrumentationName).Start(
+	_, span := otel.Tracer(u.LoadConfig(logger).InstrumentationName).Start(
 		ctx,
 		"RegisterBeforeListStorageObjects",
 		trace.WithSpanKind(trace.SpanKindInternal))

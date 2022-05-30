@@ -144,6 +144,8 @@ services:
       - >
         /nakama/nakama migrate up --database.address root@cockroach:26257 &&
         exec /nakama/nakama --config=/etc/nakama/config.yaml
+    env_file:
+      - ./.env
     expose:
       - 7348 # gRPC API embedded developer
       - 7349 # gRPC API

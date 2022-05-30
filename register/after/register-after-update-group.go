@@ -16,7 +16,7 @@ import (
 func RegisterAfterUpdateGroup(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.UpdateGroupRequest) error {
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RegisterAfterUpdateGroup", "in": in}).Debug("")
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
-	ctx, span := otel.Tracer(u.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.LoadConfig(logger).InstrumentationName).Start(
 		ctx,
 		"RegisterAfterUpdateGroup",
 		trace.WithSpanKind(trace.SpanKindInternal))

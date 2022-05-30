@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/heroiclabs/nakama-common v1.23.0
+	github.com/kelseyhightower/envconfig v1.4.0
 	go.opentelemetry.io/contrib/propagators/b3 v1.7.0
 	go.opentelemetry.io/otel v1.7.0
 	go.opentelemetry.io/otel/exporters/jaeger v1.7.0
