@@ -5,13 +5,14 @@ import (
 	"database/sql"
 
 	"github.com/heroiclabs/nakama-common/runtime"
+	"go.opentelemetry.io/contrib/propagators/b3"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
+
 	r "github.com/smhmayboudi/nakama-modules-go/register"
 	ra "github.com/smhmayboudi/nakama-modules-go/register/after"
 	rb "github.com/smhmayboudi/nakama-modules-go/register/before"
 	u "github.com/smhmayboudi/nakama-modules-go/util"
-	"go.opentelemetry.io/contrib/propagators/b3"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/trace"
 )
 
 func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, initializer runtime.Initializer) error {

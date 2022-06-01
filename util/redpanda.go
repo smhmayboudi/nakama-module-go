@@ -34,7 +34,8 @@ type Records struct {
 
 func RedpandaSend(ctx context.Context, logger runtime.Logger, payload map[string]interface{}) error {
 	nakamaContext := NewContext(ctx, logger)
-	logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RedpandaSend", "ctx": nakamaContext, "payload": payload}).Debug("")
+	fields := map[string]interface{}{"name": "RedpandaSend", "ctx": nakamaContext, "payload": payload}
+	logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
 	ctx, span := otel.Tracer(AppConfig.InstrumentationName).Start(
 		ctx,
 		"RedpandaSend",
@@ -60,7 +61,7 @@ func RedpandaSend(ctx context.Context, logger runtime.Logger, payload map[string
 	}
 	body, err := json.Marshal(records)
 	if err != nil {
-		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RedpandaSend", "ctx": nakamaContext}).WithField("error", err).Error("Failed to marshaling to JSON")
+		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).WithField("error", err).Error("Failed to marshaling to JSON")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to marshaling to JSON")
 		return err
@@ -68,7 +69,7 @@ func RedpandaSend(ctx context.Context, logger runtime.Logger, payload map[string
 
 	req, err := http.NewRequestWithContext(context.Background(), "POST", AppConfig.RedpandaURL, bytes.NewReader(body))
 	if err != nil {
-		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RedpandaSend", "ctx": nakamaContext}).WithField("error", err).Error("Failed to create request with context")
+		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).WithField("error", err).Error("Failed to create request with context")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to create request with context")
 		return err
@@ -81,7 +82,7 @@ func RedpandaSend(ctx context.Context, logger runtime.Logger, payload map[string
 	client := http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "RedpandaSend", "ctx": nakamaContext}).WithField("error", err).Error("Failed to create http client")
+		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).WithField("error", err).Error("Failed to create http client")
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to create http client")
 		return err

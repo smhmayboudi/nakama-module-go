@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/heroiclabs/nakama-common/runtime"
-
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
@@ -16,6 +15,7 @@ import (
 
 func NewOpenTelemetry(ctx context.Context, logger runtime.Logger) func() {
 	nakamaContext := NewContext(ctx, logger)
+	fields := map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}
 	rna := resource.NewWithAttributes(
 		semconv.SchemaURL,
 		semconv.ServiceInstanceIDKey.String(AppConfig.ServiceInstanceId),
@@ -28,7 +28,7 @@ func NewOpenTelemetry(ctx context.Context, logger runtime.Logger) func() {
 		rna,
 	)
 	if err != nil {
-		logger.WithFields(map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}).WithField("error", err).Error("Failed to merge resources")
+		logger.WithFields(fields).WithField("error", err).Error("Failed to merge resources")
 	}
 	rn, err := resource.New(
 		ctx,
@@ -40,22 +40,22 @@ func NewOpenTelemetry(ctx context.Context, logger runtime.Logger) func() {
 		resource.WithProcess(),
 	)
 	if err != nil {
-		logger.WithFields(map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}).WithField("error", err).Error("Failed to create a resource")
+		logger.WithFields(fields).WithField("error", err).Error("Failed to create a resource")
 	}
 	r, err := resource.Merge(
 		rm,
 		rn,
 	)
 	if err != nil {
-		logger.WithFields(map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}).WithField("error", err).Error("Failed to merge resources")
+		logger.WithFields(fields).WithField("error", err).Error("Failed to merge resources")
 	}
 	ej, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(AppConfig.JaegerURL)))
 	if err != nil {
-		logger.WithFields(map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}).WithField("error", err).Error("Failed to create jaeger exporter")
+		logger.WithFields(fields).WithField("error", err).Error("Failed to create jaeger exporter")
 	}
 	es, err := stdouttrace.New()
 	if err != nil {
-		logger.WithFields(map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}).WithField("error", err).Error("Failed to create stdouttrace exporter")
+		logger.WithFields(fields).WithField("error", err).Error("Failed to create stdouttrace exporter")
 	}
 	tp := sdkTrace.NewTracerProvider(
 		sdkTrace.WithBatcher(ej),
@@ -71,7 +71,7 @@ func NewOpenTelemetry(ctx context.Context, logger runtime.Logger) func() {
 			ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 			defer cancel()
 			if err := tp.Shutdown(ctx); err != nil {
-				logger.WithFields(map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}).WithField("error", err).Error("Failed to shutdown tracer provider")
+				logger.WithFields(fields).WithField("error", err).Error("Failed to shutdown tracer provider")
 			}
 		}(ctx)
 	}

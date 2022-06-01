@@ -11,7 +11,7 @@ import (
 
 type NakamaContext struct {
 	ClientIp       string            `json:"client_ip,omitempty"`
-	ClientSort     string            `json:"client_port,omitempty"`
+	ClientPort     string            `json:"client_port,omitempty"`
 	Env            map[string]string `json:"env,omitempty"`
 	ExecutionMode  string            `json:"execution_mode,omitempty"`
 	Headers        map[string]string `json:"headers,omitempty"`
@@ -40,9 +40,9 @@ func NewContext(ctx context.Context, logger runtime.Logger) *NakamaContext {
 	if !ok {
 		clientIp = ""
 	}
-	clientSort, ok := ctx.Value(runtime.RUNTIME_CTX_CLIENT_PORT).(string)
+	clientPort, ok := ctx.Value(runtime.RUNTIME_CTX_CLIENT_PORT).(string)
 	if !ok {
-		clientSort = ""
+		clientPort = ""
 	}
 	env, ok := ctx.Value(runtime.RUNTIME_CTX_ENV).(map[string]string)
 	if !ok {
@@ -106,7 +106,7 @@ func NewContext(ctx context.Context, logger runtime.Logger) *NakamaContext {
 	}
 	nakamaContext := &NakamaContext{
 		ClientIp:       clientIp,
-		ClientSort:     clientSort,
+		ClientPort:     clientPort,
 		Env:            env,
 		ExecutionMode:  executionMode,
 		Headers:        headers,
@@ -123,6 +123,7 @@ func NewContext(ctx context.Context, logger runtime.Logger) *NakamaContext {
 		Username:       username,
 		Vars:           vars,
 	}
-	logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(map[string]interface{}{"name": "NewContext", "ctx": nakamaContext}).Debug("")
+	fields := map[string]interface{}{"name": "NewContext", "ctx": nakamaContext}
+	logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
 	return nakamaContext
 }

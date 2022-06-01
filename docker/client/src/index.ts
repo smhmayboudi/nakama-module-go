@@ -1,7 +1,7 @@
 import logger from "./logger";
 // import { B3_CONTEXT_HEADER } from "@opentelemetry/propagator-b3";
 import { Client } from "@heroiclabs/nakama-js";
-import { context, propagation, trace } from "@opentelemetry/api";
+import { context, defaultTextMapSetter, propagation } from "@opentelemetry/api";
 import { traceSpan } from "./opentelemetry";
 
 const useSSL = false; // Enable if server is run with an SSL certificate.
@@ -14,13 +14,8 @@ const prepareClickEvent = () => {
   }
   const onClick = () => {
     traceSpan("authenticateEmail", async () => {
-      const span = trace.getSpan(context.active());
       var carrier: { [key: string]: string } = {};
-      propagation.inject(context.active(), carrier, {
-        set: (carrier, key, value) => {
-          carrier[key] = value;
-        }
-      });
+      propagation.inject(context.active(), carrier, defaultTextMapSetter);
       const email = "smhmayboudi@gmail.com";
       const password = "dY!6HY8Kz8DAJ4n";
       const create = true;

@@ -5,11 +5,12 @@ import (
 	"database/sql"
 
 	"github.com/heroiclabs/nakama-common/runtime"
-	u "github.com/smhmayboudi/nakama-modules-go/util"
 	"go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
+
+	u "github.com/smhmayboudi/nakama-modules-go/util"
 )
 
 func RegisterMatchmakerMatched(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, entries []runtime.MatchmakerEntry) (string, error) {

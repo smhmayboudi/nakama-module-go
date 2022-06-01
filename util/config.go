@@ -21,7 +21,8 @@ var AppConfig Config
 
 func NewConfig(ctx context.Context, logger runtime.Logger) {
 	nakamaContext := NewContext(ctx, logger)
+	fields := map[string]interface{}{"name": "NewConfig", "ctx": nakamaContext}
 	if err := envconfig.Process("", &AppConfig); err != nil {
-		logger.WithFields(map[string]interface{}{"name": "NewConfig", "ctx": nakamaContext}).WithField("error", err).Error("Failed to process environment variables")
+		logger.WithFields(fields).WithField("error", err).Error("Failed to process environment variables")
 	}
 }
