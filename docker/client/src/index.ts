@@ -20,15 +20,15 @@ const prepareClickEvent = () => {
       const password = "dY!6HY8Kz8DAJ4n";
       const create = true;
       const username = "smhmayboudi";
-      // const vars = new Map([[B3_CONTEXT_HEADER, carrier[B3_CONTEXT_HEADER]]]);
-      const vars = new Map([["authenticate_email_key", "authenticate_email_value"]]);
+      // const vars = {B3_CONTEXT_HEADER: carrier[B3_CONTEXT_HEADER]};
+      const vars = {"authenticate_email_key": "authenticate_email_value"};
       const session = await client.authenticateEmail(email, password, create, username, vars);
       logger.debug("AuthenticateEmail called");
       traceSpan("emitEvent", async () => {
         await client.emitEvent(session, {
           external: false,
           name: "NAME",
-          properties: new Map([["emit_event_key", "emit_event_value"]]),
+          properties: {"emit_event_key": "emit_event_value"},
           timestamp: "1970-01-01T00:00:00Z",
         })
         logger.debug("EmitEvent called");

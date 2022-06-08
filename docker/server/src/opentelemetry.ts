@@ -9,10 +9,10 @@ import {
   OTEL_BSP_SCHEDULE_DELAY,
   OTEL_EXPORTER_OTLP_CONCURRENCY_LIMIT,
   OTEL_EXPORTER_OTLP_HOSTNAME,
-  OTEL_EXPORTER_OTLP_TRACES_ATTRIBUTES,
   // OTEL_EXPORTER_OTLP_TRACES_COMPRESSION,
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
   OTEL_EXPORTER_OTLP_TRACES_HEADERS,
+  OTEL_EXPORTER_OTLP_TRACES_TIMEOUT,
   OTEL_FORCE_FLUSH_TIMEOUT,
   OTEL_RESOURCE_ATTRIBUTES,
   OTEL_SERVICE_NAME,
@@ -65,11 +65,6 @@ const instrumentations =
 tracerProvider.addSpanProcessor(
   new BatchSpanProcessor(
     new OTLPTraceExporter({
-      attributes: Object.fromEntries(
-        OTEL_EXPORTER_OTLP_TRACES_ATTRIBUTES.split(",").map((value) =>
-          value.split("=")
-        )
-      ),
       // compression: OTEL_EXPORTER_OTLP_TRACES_COMPRESSION,
       concurrencyLimit: OTEL_EXPORTER_OTLP_CONCURRENCY_LIMIT,
       headers: Object.fromEntries(
@@ -80,6 +75,7 @@ tracerProvider.addSpanProcessor(
       hostname: OTEL_EXPORTER_OTLP_HOSTNAME,
       httpAgentOptions: {},
       keepAlive: true,
+      timeoutMillis: OTEL_EXPORTER_OTLP_TRACES_TIMEOUT,
       url: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
     }),
     {
