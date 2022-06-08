@@ -3,24 +3,13 @@ package util
 import (
 	"context"
 	"fmt"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/heroiclabs/nakama-common/runtime"
 )
 
 func TestRedpandaSend(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/topics/nakama" {
-			t.Errorf("Expected to request '/topics/nakama', got: %s", r.URL.Path)
-		}
-		if r.Header.Get("Content-Type") != "application/vnd.kafka.json.v2+json" {
-			t.Errorf("Expected Content-Type: application/vnd.kafka.json.v2+json header, got: %s", r.Header.Get("Content-Type"))
-		}
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"offsets": [{"partition": 1, "offset": 0},{"partition": 2, "offset": 0},{"partition": 0, "offset": 0}]}`))
-	}))
+	server, _ := NewServer(t)
 	defer server.Close()
 
 	NewConfig(context.Background(), &TestLogger{})
