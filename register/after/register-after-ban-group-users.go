@@ -19,7 +19,7 @@ func RegisterAfterBanGroupUsers(ctx context.Context, logger runtime.Logger, db *
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterAfterBanGroupUsers", "ctx": nakamaContext, "in": in}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"RegisterAfterBanGroupUsers",
 		trace.WithSpanKind(trace.SpanKindInternal))

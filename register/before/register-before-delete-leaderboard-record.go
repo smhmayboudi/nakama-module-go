@@ -19,7 +19,7 @@ func RegisterBeforeDeleteLeaderboardRecord(ctx context.Context, logger runtime.L
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterBeforeDeleteLeaderboardRecord", "ctx": nakamaContext, "in": in}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"RegisterBeforeDeleteLeaderboardRecord",
 		trace.WithSpanKind(trace.SpanKindInternal))

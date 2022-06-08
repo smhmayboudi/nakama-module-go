@@ -17,12 +17,12 @@ type Config struct {
 	ServiceVersion      string `default:"v0.1.0" json:"service_version,omitempty" required:"true" split_words:"true"`
 }
 
-var AppConfig Config
+var ModuleConfig Config
 
 func NewConfig(ctx context.Context, logger runtime.Logger) {
 	nakamaContext := NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "NewConfig", "ctx": nakamaContext}
-	if err := envconfig.Process("", &AppConfig); err != nil {
+	if err := envconfig.Process("", &ModuleConfig); err != nil {
 		logger.WithFields(fields).WithField("error", err).Error("Failed to process environment variables")
 	}
 }

@@ -19,7 +19,7 @@ func RegisterAfterAuthenticateGameCenter(ctx context.Context, logger runtime.Log
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterAfterAuthenticateGameCenter", "ctx": nakamaContext, "in": in, "out": out}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"RegisterAfterAuthenticateGameCenter",
 		trace.WithSpanKind(trace.SpanKindInternal))

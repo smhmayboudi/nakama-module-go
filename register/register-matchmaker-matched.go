@@ -18,7 +18,7 @@ func RegisterMatchmakerMatched(ctx context.Context, logger runtime.Logger, db *s
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatchmakerMatched", "ctx": nakamaContext, "entries": entries}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"RegisterMatchmakerMatched",
 		trace.WithSpanKind(trace.SpanKindInternal))

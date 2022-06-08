@@ -24,7 +24,7 @@ func TestRedpandaSend(t *testing.T) {
 	defer server.Close()
 
 	NewConfig(context.Background(), &TestLogger{})
-	AppConfig.RedpandaURL = fmt.Sprintf("%s/topics/nakama", server.URL)
+	ModuleConfig.RedpandaURL = fmt.Sprintf("%s/topics/nakama", server.URL)
 
 	type args struct {
 		ctx     context.Context

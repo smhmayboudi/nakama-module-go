@@ -30,7 +30,7 @@ type NakamaContext struct {
 }
 
 func NewContext(ctx context.Context, logger runtime.Logger) *NakamaContext {
-	ctx, span := otel.Tracer(AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"NewContext",
 		trace.WithSpanKind(trace.SpanKindInternal))

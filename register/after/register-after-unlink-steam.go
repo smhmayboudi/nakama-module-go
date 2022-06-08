@@ -19,7 +19,7 @@ func RegisterAfterUnlinkSteam(ctx context.Context, logger runtime.Logger, db *sq
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterAfterUnlinkSteam", "ctx": nakamaContext, "in": in}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"RegisterAfterUnlinkSteam",
 		trace.WithSpanKind(trace.SpanKindInternal))

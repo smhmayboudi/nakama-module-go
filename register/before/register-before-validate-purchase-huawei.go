@@ -19,7 +19,7 @@ func RegisterBeforeValidatePurchaseHuawei(ctx context.Context, logger runtime.Lo
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterBeforeValidatePurchaseHuawei", "ctx": nakamaContext, "in": in}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"RegisterBeforeValidatePurchaseHuawei",
 		trace.WithSpanKind(trace.SpanKindInternal))

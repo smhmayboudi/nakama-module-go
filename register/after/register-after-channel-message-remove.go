@@ -19,7 +19,7 @@ func RegisterAfterChannelMessageRemove(ctx context.Context, logger runtime.Logge
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterAfterChannelMessageRemove", "ctx": nakamaContext, "in": in, "out": out}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"RegisterAfterChannelMessageRemove",
 		trace.WithSpanKind(trace.SpanKindInternal))

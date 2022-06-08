@@ -27,7 +27,7 @@ func (match *Match) MatchInit(ctx context.Context, logger runtime.Logger, db *sq
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchInit", "ctx": nakamaContext, "params": params}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"MatchInit",
 		trace.WithSpanKind(trace.SpanKindInternal))
@@ -63,7 +63,7 @@ func (match *Match) MatchJoinAttempt(ctx context.Context, logger runtime.Logger,
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchJoinAttempt", "ctx": nakamaContext, "tick": tick, "state": state, "presence": presence, "metadata": metadata}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"MatchJoinAttempt",
 		trace.WithSpanKind(trace.SpanKindInternal))
@@ -88,7 +88,7 @@ func (match *Match) MatchJoin(ctx context.Context, logger runtime.Logger, db *sq
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchJoin", "ctx": nakamaContext, "tick": tick, "state": state, "presences": presences}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"MatchJoin",
 		trace.WithSpanKind(trace.SpanKindInternal))
@@ -115,7 +115,7 @@ func (match *Match) MatchLeave(ctx context.Context, logger runtime.Logger, db *s
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchLeave", "ctx": nakamaContext, "tick": tick, "state": state, "presences": presences}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"MatchLeave",
 		trace.WithSpanKind(trace.SpanKindInternal))
@@ -142,7 +142,7 @@ func (match *Match) MatchLoop(ctx context.Context, logger runtime.Logger, db *sq
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchLoop", "ctx": nakamaContext, "tick": tick, "state": state, "messages": messages}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"MatchLoop",
 		trace.WithSpanKind(trace.SpanKindInternal))
@@ -171,7 +171,7 @@ func (match *Match) MatchTerminate(ctx context.Context, logger runtime.Logger, d
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchTerminate", "ctx": nakamaContext, "tick": tick, "state": state, "graceSeconds": graceSeconds}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"MatchTerminate",
 		trace.WithSpanKind(trace.SpanKindInternal))
@@ -197,7 +197,7 @@ func (match *Match) MatchSignal(ctx context.Context, logger runtime.Logger, db *
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchSignal", "ctx": nakamaContext, "tick": tick, "state": state, "data": data}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"MatchSignal",
 		trace.WithSpanKind(trace.SpanKindInternal))
@@ -224,7 +224,7 @@ func RegisterMatch(ctx context.Context, logger runtime.Logger, db *sql.DB, nk ru
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch", "ctx": nakamaContext}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"RegisterMatch",
 		trace.WithSpanKind(trace.SpanKindInternal))

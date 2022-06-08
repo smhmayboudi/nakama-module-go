@@ -19,7 +19,7 @@ func RegisterBeforeDeleteNotifications(ctx context.Context, logger runtime.Logge
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterBeforeDeleteNotifications", "ctx": nakamaContext, "in": in}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"RegisterBeforeDeleteNotification",
 		trace.WithSpanKind(trace.SpanKindInternal))

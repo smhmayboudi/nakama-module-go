@@ -19,7 +19,7 @@ func RegisterAfterListGroups(ctx context.Context, logger runtime.Logger, db *sql
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterAfterListGroups", "ctx": nakamaContext, "in": in, "out": out}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"RegisterAfterListGroups",
 		trace.WithSpanKind(trace.SpanKindInternal))

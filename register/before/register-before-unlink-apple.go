@@ -19,7 +19,7 @@ func RegisterBeforeUnlinkApple(ctx context.Context, logger runtime.Logger, db *s
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterBeforeUnlinkApple", "ctx": nakamaContext, "in": in}
 	logger.WithFields(u.Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(u.AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(u.ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"RegisterBeforeUnlinkApple",
 		trace.WithSpanKind(trace.SpanKindInternal))

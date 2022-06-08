@@ -36,7 +36,7 @@ func RedpandaSend(ctx context.Context, logger runtime.Logger, payload map[string
 	nakamaContext := NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RedpandaSend", "ctx": nakamaContext, "payload": payload}
 	logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).Debug("")
-	ctx, span := otel.Tracer(AppConfig.InstrumentationName).Start(
+	ctx, span := otel.Tracer(ModuleConfig.InstrumentationName).Start(
 		ctx,
 		"RedpandaSend",
 		trace.WithSpanKind(trace.SpanKindProducer))
@@ -67,7 +67,7 @@ func RedpandaSend(ctx context.Context, logger runtime.Logger, payload map[string
 		return err
 	}
 
-	req, err := http.NewRequestWithContext(context.Background(), "POST", AppConfig.RedpandaURL, bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(context.Background(), "POST", ModuleConfig.RedpandaURL, bytes.NewReader(body))
 	if err != nil {
 		logger.WithFields(Inject(ctx, b3.B3MultipleHeader)).WithFields(fields).WithField("error", err).Error("Failed to create request with context")
 		span.RecordError(err)

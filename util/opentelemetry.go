@@ -18,10 +18,10 @@ func NewOpenTelemetry(ctx context.Context, logger runtime.Logger) func() {
 	fields := map[string]interface{}{"name": "NewOpenTelemetry", "ctx": nakamaContext}
 	rna := resource.NewWithAttributes(
 		semconv.SchemaURL,
-		semconv.ServiceInstanceIDKey.String(AppConfig.ServiceInstanceId),
-		semconv.ServiceNameKey.String(AppConfig.ServiceName),
-		semconv.ServiceNamespaceKey.String(AppConfig.ServiceNamespace),
-		semconv.ServiceVersionKey.String(AppConfig.ServiceVersion),
+		semconv.ServiceInstanceIDKey.String(ModuleConfig.ServiceInstanceId),
+		semconv.ServiceNameKey.String(ModuleConfig.ServiceName),
+		semconv.ServiceNamespaceKey.String(ModuleConfig.ServiceNamespace),
+		semconv.ServiceVersionKey.String(ModuleConfig.ServiceVersion),
 	)
 	rm, err := resource.Merge(
 		resource.Default(),
@@ -49,7 +49,7 @@ func NewOpenTelemetry(ctx context.Context, logger runtime.Logger) func() {
 	if err != nil {
 		logger.WithFields(fields).WithField("error", err).Error("Failed to merge resources")
 	}
-	ej, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(AppConfig.JaegerURL)))
+	ej, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(ModuleConfig.JaegerURL)))
 	if err != nil {
 		logger.WithFields(fields).WithField("error", err).Error("Failed to create jaeger exporter")
 	}
