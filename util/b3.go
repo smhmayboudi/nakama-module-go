@@ -37,6 +37,7 @@ func mapper(key string) string {
 }
 
 func Extract(ctx context.Context, encoding b3.Encoding) context.Context {
+	// TODO: FIXME
 	vars, ok := ctx.Value(runtime.RUNTIME_CTX_VARS).(map[string]string)
 	if !ok {
 		vars = map[string]string{}

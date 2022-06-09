@@ -9,7 +9,7 @@ import (
 )
 
 func TestRedpandaSend(t *testing.T) {
-	server, _ := NewServer(t)
+	server := NewServer(t)
 	defer server.Close()
 
 	NewConfig(context.Background(), &TestLogger{})

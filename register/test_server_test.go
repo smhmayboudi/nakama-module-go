@@ -10,7 +10,7 @@ import (
 	u "github.com/smhmayboudi/nakama-modules-go/util"
 )
 
-func NewServer(t *testing.T) (*httptest.Server, error) {
+func NewServer(t *testing.T) *httptest.Server {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/topics/nakama" {
 			t.Errorf("Expected to request '/topics/nakama', got: %s", r.URL.Path)
@@ -25,5 +25,5 @@ func NewServer(t *testing.T) (*httptest.Server, error) {
 	u.NewConfig(context.Background(), &TestLogger{})
 	u.ModuleConfig.RedpandaURL = fmt.Sprintf("%s/topics/nakama", server.URL)
 
-	return server, nil
+	return server
 }

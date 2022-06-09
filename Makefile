@@ -60,6 +60,11 @@ clippy: ## Clippy
 conventional-commits-linter: ## Conventional Commits Linter
 	echo "conventional-commits-linter"
 
+.PHONY: coverage
+coverage: ## Coverage
+	go test ./... -covermode=atomic -coverprofile=./coverage/coverage.out
+	go tool cover -html=./coverage/coverage.out -o=./coverage/coverage.html
+
 .PHONY: deny-check
 deny-check: ## Deny Check
 	echo "deny-check"

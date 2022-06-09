@@ -21,37 +21,51 @@ func Test_mapper(t *testing.T) {
 	}{
 		{
 			name: "b3ContextHeader",
-			args: args{key: b3ContextHeader},
+			args: args{
+				key: b3ContextHeader,
+			},
 			want: "b3",
 		},
 		{
 			name: "b3DebugFlagHeader",
-			args: args{key: b3DebugFlagHeader},
+			args: args{
+				key: b3DebugFlagHeader,
+			},
 			want: "flags",
 		},
 		{
 			name: "b3ParentSpanIDHeader",
-			args: args{key: b3ParentSpanIDHeader},
+			args: args{
+				key: b3ParentSpanIDHeader,
+			},
 			want: "parent_span_id",
 		},
 		{
 			name: "b3SampledHeader",
-			args: args{key: b3SampledHeader},
+			args: args{
+				key: b3SampledHeader,
+			},
 			want: "sampled",
 		},
 		{
 			name: "b3SpanIDHeader",
-			args: args{key: b3SpanIDHeader},
+			args: args{
+				key: b3SpanIDHeader,
+			},
 			want: "span_id",
 		},
 		{
 			name: "b3TraceIDHeader",
-			args: args{key: b3TraceIDHeader},
+			args: args{
+				key: b3TraceIDHeader,
+			},
 			want: "trace_id",
 		},
 		{
 			name: "default",
-			args: args{key: "default"},
+			args: args{
+				key: "default",
+			},
 			want: "default",
 		},
 	}
@@ -75,13 +89,14 @@ func TestExtract(t *testing.T) {
 		want context.Context
 	}{
 		{
-			name: "default",
+			name: "Extract",
 			args: args{
 				ctx:      context.Background(),
 				encoding: b3.B3SingleHeader,
 			},
 			want: func() context.Context {
 				ctx := context.Background()
+				// TODO: FIXME
 				vars, ok := ctx.Value(runtime.RUNTIME_CTX_VARS).(map[string]string)
 				if !ok {
 					vars = map[string]string{}
@@ -111,7 +126,7 @@ func TestInject(t *testing.T) {
 		want map[string]interface{}
 	}{
 		{
-			name: "default",
+			name: "Inject",
 			args: args{
 				ctx:      context.Background(),
 				encoding: b3.B3SingleHeader,

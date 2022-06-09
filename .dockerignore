@@ -1,7 +1,12 @@
+.devcontainer/
+.githooks/
 .vscode/
 build/
+coverage/
 docker/
 script/
+.dockerignore
+.env.example
 .gitignore
 docker-compose.yaml
 LICENSE

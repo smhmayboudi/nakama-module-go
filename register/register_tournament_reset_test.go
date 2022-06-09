@@ -10,7 +10,7 @@ import (
 )
 
 func TestRegisterTournamentReset(t *testing.T) {
-	server, _ := NewServer(t)
+	server := NewServer(t)
 	defer server.Close()
 
 	type args struct {

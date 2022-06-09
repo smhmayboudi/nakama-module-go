@@ -12,6 +12,9 @@ import (
 )
 
 func TestMatch_MatchInit(t *testing.T) {
+	server := NewServer(t)
+	defer server.Close()
+
 	type args struct {
 		ctx    context.Context
 		logger runtime.Logger
@@ -27,7 +30,23 @@ func TestMatch_MatchInit(t *testing.T) {
 		want1 int
 		want2 string
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Match_MatchInit",
+			args: args{
+				ctx:    context.Background(),
+				logger: &TestLogger{},
+				db:     &sql.DB{},
+				nk:     nil,
+				params: map[string]interface{}{
+					"debug": false,
+				},
+			},
+			want: &MatchState{
+				debug: false,
+			},
+			want1: 1,
+			want2: "skill=100-150",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -47,6 +66,9 @@ func TestMatch_MatchInit(t *testing.T) {
 }
 
 func TestMatch_MatchJoinAttempt(t *testing.T) {
+	server := NewServer(t)
+	defer server.Close()
+
 	type args struct {
 		ctx        context.Context
 		logger     runtime.Logger
@@ -66,7 +88,25 @@ func TestMatch_MatchJoinAttempt(t *testing.T) {
 		want1 bool
 		want2 string
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Match_MatchJoinAttempt",
+			args: args{
+				ctx:        context.Background(),
+				logger:     &TestLogger{},
+				db:         &sql.DB{},
+				nk:         nil,
+				dispatcher: nil,
+				tick:       0,
+				state: &MatchState{
+					debug: false,
+				},
+			},
+			want: &MatchState{
+				debug: false,
+			},
+			want1: true,
+			want2: "",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -86,6 +126,9 @@ func TestMatch_MatchJoinAttempt(t *testing.T) {
 }
 
 func TestMatch_MatchJoin(t *testing.T) {
+	server := NewServer(t)
+	defer server.Close()
+
 	type args struct {
 		ctx        context.Context
 		logger     runtime.Logger
@@ -102,7 +145,23 @@ func TestMatch_MatchJoin(t *testing.T) {
 		args  args
 		want  interface{}
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Match_MatchJoin",
+			args: args{
+				ctx:        context.Background(),
+				logger:     &TestLogger{},
+				db:         &sql.DB{},
+				nk:         nil,
+				dispatcher: nil,
+				tick:       0,
+				state: &MatchState{
+					debug: false,
+				},
+			},
+			want: &MatchState{
+				debug: false,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -115,6 +174,9 @@ func TestMatch_MatchJoin(t *testing.T) {
 }
 
 func TestMatch_MatchLeave(t *testing.T) {
+	server := NewServer(t)
+	defer server.Close()
+
 	type args struct {
 		ctx        context.Context
 		logger     runtime.Logger
@@ -131,7 +193,23 @@ func TestMatch_MatchLeave(t *testing.T) {
 		args  args
 		want  interface{}
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Match_MatchLeave",
+			args: args{
+				ctx:        context.Background(),
+				logger:     &TestLogger{},
+				db:         &sql.DB{},
+				nk:         nil,
+				dispatcher: nil,
+				tick:       0,
+				state: &MatchState{
+					debug: false,
+				},
+			},
+			want: &MatchState{
+				debug: false,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -144,6 +222,9 @@ func TestMatch_MatchLeave(t *testing.T) {
 }
 
 func TestMatch_MatchLoop(t *testing.T) {
+	server := NewServer(t)
+	defer server.Close()
+
 	type args struct {
 		ctx        context.Context
 		logger     runtime.Logger
@@ -160,7 +241,23 @@ func TestMatch_MatchLoop(t *testing.T) {
 		args  args
 		want  interface{}
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Match_MatchLoop",
+			args: args{
+				ctx:        context.Background(),
+				logger:     &TestLogger{},
+				db:         &sql.DB{},
+				nk:         nil,
+				dispatcher: nil,
+				tick:       0,
+				state: &MatchState{
+					debug: false,
+				},
+			},
+			want: &MatchState{
+				debug: false,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -173,6 +270,9 @@ func TestMatch_MatchLoop(t *testing.T) {
 }
 
 func TestMatch_MatchTerminate(t *testing.T) {
+	server := NewServer(t)
+	defer server.Close()
+
 	type args struct {
 		ctx          context.Context
 		logger       runtime.Logger
@@ -189,7 +289,23 @@ func TestMatch_MatchTerminate(t *testing.T) {
 		args  args
 		want  interface{}
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Match_MatchTerminate",
+			args: args{
+				ctx:        context.Background(),
+				logger:     &TestLogger{},
+				db:         &sql.DB{},
+				nk:         nil,
+				dispatcher: nil,
+				tick:       0,
+				state: &MatchState{
+					debug: false,
+				},
+			},
+			want: &MatchState{
+				debug: false,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -202,6 +318,9 @@ func TestMatch_MatchTerminate(t *testing.T) {
 }
 
 func TestMatch_MatchSignal(t *testing.T) {
+	server := NewServer(t)
+	defer server.Close()
+
 	type args struct {
 		ctx        context.Context
 		logger     runtime.Logger
@@ -219,7 +338,25 @@ func TestMatch_MatchSignal(t *testing.T) {
 		want  interface{}
 		want1 string
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Match_MatchSignal",
+			args: args{
+				ctx:        context.Background(),
+				logger:     &TestLogger{},
+				db:         &sql.DB{},
+				nk:         nil,
+				dispatcher: nil,
+				tick:       0,
+				state: &MatchState{
+					debug: false,
+				},
+				data: "",
+			},
+			want: &MatchState{
+				debug: false,
+			},
+			want1: "",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -236,6 +373,9 @@ func TestMatch_MatchSignal(t *testing.T) {
 }
 
 func TestRegisterMatch(t *testing.T) {
+	server := NewServer(t)
+	defer server.Close()
+
 	type args struct {
 		ctx    context.Context
 		logger runtime.Logger
@@ -248,7 +388,17 @@ func TestRegisterMatch(t *testing.T) {
 		want    runtime.Match
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "RegisterMatch",
+			args: args{
+				ctx:    context.Background(),
+				logger: &TestLogger{},
+				db:     &sql.DB{},
+				nk:     nil,
+			},
+			want:    &Match{},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
