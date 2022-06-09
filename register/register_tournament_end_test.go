@@ -33,7 +33,7 @@ func TestRegisterTournamentEnd(t *testing.T) {
 				ctx:        context.Background(),
 				logger:     &TestLogger{},
 				db:         &sql.DB{},
-				nk:         nil,
+				nk:         &TestNakamaModule{},
 				tournament: &api.Tournament{},
 				end:        0,
 				reset:      0,

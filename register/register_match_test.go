@@ -36,7 +36,7 @@ func TestMatch_MatchInit(t *testing.T) {
 				ctx:    context.Background(),
 				logger: &TestLogger{},
 				db:     &sql.DB{},
-				nk:     nil,
+				nk:     &TestNakamaModule{},
 				params: map[string]interface{}{
 					"debug": false,
 				},
@@ -94,7 +94,7 @@ func TestMatch_MatchJoinAttempt(t *testing.T) {
 				ctx:        context.Background(),
 				logger:     &TestLogger{},
 				db:         &sql.DB{},
-				nk:         nil,
+				nk:         &TestNakamaModule{},
 				dispatcher: nil,
 				tick:       0,
 				state: &MatchState{
@@ -151,7 +151,7 @@ func TestMatch_MatchJoin(t *testing.T) {
 				ctx:        context.Background(),
 				logger:     &TestLogger{},
 				db:         &sql.DB{},
-				nk:         nil,
+				nk:         &TestNakamaModule{},
 				dispatcher: nil,
 				tick:       0,
 				state: &MatchState{
@@ -199,7 +199,7 @@ func TestMatch_MatchLeave(t *testing.T) {
 				ctx:        context.Background(),
 				logger:     &TestLogger{},
 				db:         &sql.DB{},
-				nk:         nil,
+				nk:         &TestNakamaModule{},
 				dispatcher: nil,
 				tick:       0,
 				state: &MatchState{
@@ -247,7 +247,7 @@ func TestMatch_MatchLoop(t *testing.T) {
 				ctx:        context.Background(),
 				logger:     &TestLogger{},
 				db:         &sql.DB{},
-				nk:         nil,
+				nk:         &TestNakamaModule{},
 				dispatcher: nil,
 				tick:       0,
 				state: &MatchState{
@@ -295,7 +295,7 @@ func TestMatch_MatchTerminate(t *testing.T) {
 				ctx:        context.Background(),
 				logger:     &TestLogger{},
 				db:         &sql.DB{},
-				nk:         nil,
+				nk:         &TestNakamaModule{},
 				dispatcher: nil,
 				tick:       0,
 				state: &MatchState{
@@ -344,7 +344,7 @@ func TestMatch_MatchSignal(t *testing.T) {
 				ctx:        context.Background(),
 				logger:     &TestLogger{},
 				db:         &sql.DB{},
-				nk:         nil,
+				nk:         &TestNakamaModule{},
 				dispatcher: nil,
 				tick:       0,
 				state: &MatchState{
@@ -394,7 +394,7 @@ func TestRegisterMatch(t *testing.T) {
 				ctx:    context.Background(),
 				logger: &TestLogger{},
 				db:     &sql.DB{},
-				nk:     nil,
+				nk:     &TestNakamaModule{},
 			},
 			want:    &Match{},
 			wantErr: false,

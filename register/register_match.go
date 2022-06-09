@@ -22,7 +22,7 @@ type MatchState struct {
 }
 
 // MatchInit implements runtime.Match
-func (match *Match) MatchInit(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, params map[string]interface{}) (interface{}, int, string) {
+func (m *Match) MatchInit(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, params map[string]interface{}) (interface{}, int, string) {
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchInit", "ctx": nakamaContext, "params": params}
@@ -58,7 +58,7 @@ func (match *Match) MatchInit(ctx context.Context, logger runtime.Logger, db *sq
 }
 
 // MatchJoinAttempt implements runtime.Match
-func (match *Match) MatchJoinAttempt(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, dispatcher runtime.MatchDispatcher, tick int64, state interface{}, presence runtime.Presence, metadata map[string]string) (interface{}, bool, string) {
+func (m *Match) MatchJoinAttempt(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, dispatcher runtime.MatchDispatcher, tick int64, state interface{}, presence runtime.Presence, metadata map[string]string) (interface{}, bool, string) {
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchJoinAttempt", "ctx": nakamaContext, "tick": tick, "state": state, "presence": presence, "metadata": metadata}
@@ -83,7 +83,7 @@ func (match *Match) MatchJoinAttempt(ctx context.Context, logger runtime.Logger,
 }
 
 // MatchJoin implements runtime.Match
-func (match *Match) MatchJoin(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, dispatcher runtime.MatchDispatcher, tick int64, state interface{}, presences []runtime.Presence) interface{} {
+func (m *Match) MatchJoin(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, dispatcher runtime.MatchDispatcher, tick int64, state interface{}, presences []runtime.Presence) interface{} {
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchJoin", "ctx": nakamaContext, "tick": tick, "state": state, "presences": presences}
@@ -110,7 +110,7 @@ func (match *Match) MatchJoin(ctx context.Context, logger runtime.Logger, db *sq
 }
 
 // MatchLeave implements runtime.Match
-func (match *Match) MatchLeave(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, dispatcher runtime.MatchDispatcher, tick int64, state interface{}, presences []runtime.Presence) interface{} {
+func (m *Match) MatchLeave(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, dispatcher runtime.MatchDispatcher, tick int64, state interface{}, presences []runtime.Presence) interface{} {
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchLeave", "ctx": nakamaContext, "tick": tick, "state": state, "presences": presences}
@@ -137,7 +137,7 @@ func (match *Match) MatchLeave(ctx context.Context, logger runtime.Logger, db *s
 }
 
 // MatchLoop implements runtime.Match
-func (match *Match) MatchLoop(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, dispatcher runtime.MatchDispatcher, tick int64, state interface{}, messages []runtime.MatchData) interface{} {
+func (m *Match) MatchLoop(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, dispatcher runtime.MatchDispatcher, tick int64, state interface{}, messages []runtime.MatchData) interface{} {
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchLoop", "ctx": nakamaContext, "tick": tick, "state": state, "messages": messages}
@@ -166,7 +166,7 @@ func (match *Match) MatchLoop(ctx context.Context, logger runtime.Logger, db *sq
 }
 
 // MatchTerminate implements runtime.Match
-func (match *Match) MatchTerminate(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, dispatcher runtime.MatchDispatcher, tick int64, state interface{}, graceSeconds int) interface{} {
+func (m *Match) MatchTerminate(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, dispatcher runtime.MatchDispatcher, tick int64, state interface{}, graceSeconds int) interface{} {
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchTerminate", "ctx": nakamaContext, "tick": tick, "state": state, "graceSeconds": graceSeconds}
@@ -192,7 +192,7 @@ func (match *Match) MatchTerminate(ctx context.Context, logger runtime.Logger, d
 }
 
 // MatchSignal implements runtime.Match
-func (match *Match) MatchSignal(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, dispatcher runtime.MatchDispatcher, tick int64, state interface{}, data string) (interface{}, string) {
+func (m *Match) MatchSignal(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, dispatcher runtime.MatchDispatcher, tick int64, state interface{}, data string) (interface{}, string) {
 	ctx = u.Extract(ctx, b3.B3SingleHeader)
 	nakamaContext := u.NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "RegisterMatch.MatchSignal", "ctx": nakamaContext, "tick": tick, "state": state, "data": data}

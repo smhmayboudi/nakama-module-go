@@ -31,7 +31,7 @@ func TestRegisterMatchmakerMatched(t *testing.T) {
 				ctx:     context.Background(),
 				logger:  &TestLogger{},
 				db:      &sql.DB{},
-				nk:      nil,
+				nk:      &TestNakamaModule{},
 				entries: []runtime.MatchmakerEntry{},
 			},
 			want:    "",

@@ -7,5 +7,15 @@
   },
   "redhat.telemetry.enabled": true,
   "window.zoomLevel": 1,
-  "workbench.iconTheme": "material-icon-theme"
+  "workbench.iconTheme": "material-icon-theme",
+  "cSpell.words": [
+    "heroiclabs",
+    "nakama",
+    "Nakama",
+    "opentelemetry",
+    "otel",
+    "redpanda",
+    "Redpanda",
+    "smhmayboudi"
+  ]
 }

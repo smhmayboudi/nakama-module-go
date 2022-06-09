@@ -32,7 +32,7 @@ func TestRegisterLeaderboardReset(t *testing.T) {
 				ctx:         context.Background(),
 				logger:      &TestLogger{},
 				db:          &sql.DB{},
-				nk:          nil,
+				nk:          &TestNakamaModule{},
 				leaderboard: &api.Leaderboard{},
 				reset:       1,
 			},
