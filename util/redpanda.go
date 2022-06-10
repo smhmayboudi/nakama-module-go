@@ -14,22 +14,22 @@ import (
 )
 
 type Key struct {
-	Node string `json:"node,omitempty"`
+	Node string `json:"node,omitempty" protobuf:"bytes,1,opt,name=node,json=node,proto3"`
 }
 
 type Value struct {
-	B3      string                 `json:"b3,omitempty"`
-	Payload map[string]interface{} `json:"payload,omitempty"`
+	B3      string                 `json:"b3,omitempty" protobuf:"bytes,1,opt,name=b3,json=b3,proto3"`
+	Payload map[string]interface{} `json:"payload,omitempty" protobuf:"bytes,2,rep,name=vars,json=vars,proto3" protobuf_key:"bytes,1,opt,name=key,json=key,proto3" protobuf_val:"bytes,2,opt,name=value,json=value,proto3"`
 }
 
 type Record struct {
-	Key       Key   `json:"key,omitempty"`
-	Partition int   `json:"partition,omitempty"`
-	Value     Value `json:"value,omitempty"`
+	Key       Key   `json:"key,omitempty" protobuf:"bytes,1,opt,name=key,json=key,proto3"`
+	Partition int   `json:"partition,omitempty" protobuf:"varint,2,opt,name=partition,json=partition,proto3"`
+	Value     Value `json:"value,omitempty" protobuf:"bytes,3,opt,name=value,json=value,proto3"`
 }
 
 type Records struct {
-	Records []Record `json:"records,omitempty"`
+	Records []Record `json:"records,omitempty" protobuf:"bytes,1,rep,name=records,json=records,proto3"`
 }
 
 func RedpandaSend(ctx context.Context, logger runtime.Logger, payload map[string]interface{}) error {

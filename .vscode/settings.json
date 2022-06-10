@@ -1,9 +1,29 @@
 {
-  "editor.tabSize": 2,
   "editor.inlineSuggest.enabled": true,
+  "editor.tabSize": 2,
+  // go.coverMode
+  // go.call graph feature 
+  "go.coverOnSave": true,
+  "go.coverageDecorator": {
+    "coveredBorderColor": "rgba(64,128,128,0.5)",
+    "coveredGutterStyle": "blockgreen",
+    "coveredHighlightColor": "rgba(64,128,128,0.5)",
+    "type": "gutter",
+    "uncoveredBorderColor": "rgba(128,64,64,0.25)",
+    "uncoveredGutterStyle": "blockred",
+    "uncoveredHighlightColor": "rgba(128,64,64,0.25)"
+  },
   "go.toolsManagement.autoUpdate": true,
   "gopls": {
-    "ui.semanticTokens": true
+    "ui.diagnostic.analyses": {
+      "fieldalignment": false,
+      "shadow": true,
+      "unusedparams": false,
+      "unusedwrite": false,
+      "useany": false
+    },
+    "ui.semanticTokens": true,
+    "ui.diagnostic.staticcheck": true
   },
   "redhat.telemetry.enabled": true,
   "window.zoomLevel": 1,

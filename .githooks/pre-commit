@@ -6,8 +6,8 @@ set -o pipefail
 set -o nounset
 
 make \
-	clippy \
-	fmt-check
+	fix \
+	format
 
 for FILE in $(git diff --name-status --staged \
 			| grep .rs \

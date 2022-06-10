@@ -65,14 +65,14 @@ func NewOpenTelemetry(ctx context.Context, logger runtime.Logger) func() {
 	otel.SetTracerProvider(tp)
 
 	return func() {
-		ctx, cancel := context.WithCancel(ctx)
+		ctxWC, cancel := context.WithCancel(ctx)
 		defer cancel()
-		defer func(ctx context.Context) {
-			ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+		defer func(ctxWT context.Context) {
+			ctxWT, cancel := context.WithTimeout(ctxWT, 5*time.Second)
 			defer cancel()
-			if err := tp.Shutdown(ctx); err != nil {
+			if err := tp.Shutdown(ctxWT); err != nil {
 				logger.WithFields(fields).WithField("error", err).Error("Failed to shutdown tracer provider")
 			}
-		}(ctx)
+		}(ctxWC)
 	}
 }

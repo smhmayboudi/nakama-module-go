@@ -6,7 +6,5 @@ set -o pipefail
 set -o nounset
 
 make \
-    audit \
-    check \
-    deny-check \
+    static-analysis \
     test

@@ -10,23 +10,23 @@ import (
 )
 
 type NakamaContext struct {
-	ClientIp       string            `json:"client_ip,omitempty"`
-	ClientPort     string            `json:"client_port,omitempty"`
-	Env            map[string]string `json:"env,omitempty"`
-	ExecutionMode  string            `json:"execution_mode,omitempty"`
-	Headers        map[string]string `json:"headers,omitempty"`
-	Lang           string            `json:"lang,omitempty"`
-	MatchId        string            `json:"match_id,omitempty"`
-	MatchLabel     string            `json:"match_label,omitempty"`
-	MatchNode      string            `json:"match_node,omitempty"`
-	MatchTickRate  int               `json:"match_tick_rate,omitempty"`
-	Node           string            `json:"node,omitempty"`
-	QueryParams    map[string]string `json:"query_params,omitempty"`
-	SessionId      string            `json:"session_id,omitempty"`
-	UserId         string            `json:"user_id,omitempty"`
-	UserSessionExp int               `json:"user_session_exp,omitempty"`
-	Username       string            `json:"username,omitempty"`
-	Vars           map[string]string `json:"vars,omitempty"`
+	ClientIp       string            `json:"client_ip,omitempty" protobuf:"bytes,1,opt,name=client_ip,json=client_ip,proto3"`
+	ClientPort     string            `json:"client_port,omitempty" protobuf:"bytes,2,opt,name=client_port,json=client_port,proto3"`
+	Env            map[string]string `json:"env,omitempty" protobuf:"bytes,3,opt,name=env,json=env,proto3" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	ExecutionMode  string            `json:"execution_mode,omitempty" protobuf:"bytes,4,opt,name=execution_mode,json=execution_mode,proto3"`
+	Headers        map[string]string `json:"headers,omitempty" protobuf:"bytes,5,opt,name=headers,json=headers,proto3" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Lang           string            `json:"lang,omitempty" protobuf:"bytes,6,opt,name=lang,json=lang,proto3"`
+	MatchId        string            `json:"match_id,omitempty" protobuf:"bytes,7,opt,name=match_id,json=match_id,proto3"`
+	MatchLabel     string            `json:"match_label,omitempty" protobuf:"bytes,8,opt,name=match_label,json=match_label,proto3"`
+	MatchNode      string            `json:"match_node,omitempty" protobuf:"bytes,9,opt,name=match_node,json=match_node,proto3"`
+	MatchTickRate  int               `json:"match_tick_rate,omitempty" protobuf:"bytes,10,opt,name=match_tick_rate,json=match_tick_rate,proto3"`
+	Node           string            `json:"node,omitempty" protobuf:"bytes,11,opt,name=node,json=node,proto3"`
+	QueryParams    map[string]string `json:"query_params,omitempty" protobuf:"bytes,12,opt,name=query_params,json=query_params,proto3" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SessionId      string            `json:"session_id,omitempty" protobuf:"bytes,13,opt,name=session_id,json=session_id,proto3"`
+	UserId         string            `json:"user_id,omitempty" protobuf:"bytes,14,opt,name=user_id,json=user_id,proto3"`
+	UserSessionExp int               `json:"user_session_exp,omitempty" protobuf:"bytes,15,opt,name=user_session_exp,json=user_session_exp,proto3"`
+	Username       string            `json:"username,omitempty" protobuf:"bytes,16,opt,name=username,json=username,proto3"`
+	Vars           map[string]string `json:"vars,omitempty" protobuf:"bytes,17,opt,name=vars,json=vars,proto3" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func NewContext(ctx context.Context, logger runtime.Logger) *NakamaContext {

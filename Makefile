@@ -11,8 +11,12 @@ $(GIT_HOOKS): .git/hooks/%: .githooks/%
 .git/hooks/%:
 	cp $< $@
 
+.PHONY: clean-git-configs
+clean-git-configs: ## Clean Git Configs
+	echo "clean-git-configs"
+
 .PHONY: add-git-configs
-add-git-configs: ## Add Git Configs
+add-git-configs: clean-git-configs ## Add Git Configs
 	git config --global branch.autosetuprebase always
 	git config --global color.branch true
 	git config --global color.diff true
@@ -37,43 +41,17 @@ add-git-configs: ## Add Git Configs
 	git config --global stash.showpatch true
 	git config --global tag.gpgsign true
 
-.PHONY: add-git-hooks
-add-git-hooks: clean-git-hooks $(GIT_HOOKS) ## Add Git Hooks
-
-.PHONY: audit
-audit: ## Audit
-	echo "audit"
-
-.PHONY: check
-check: ## Check
-	echo "check"
-
 .PHONY: clean-git-hooks
 clean-git-hooks: ## Clean Git Hooks
 	rm -fr $(GIT_HOOKS)
 
-.PHONY: clippy
-clippy: ## Clippy
-	echo "clippy"
+.PHONY: add-git-hooks
+add-git-hooks: clean-git-hooks $(GIT_HOOKS) ## Add Git Hooks
 
-.PHONY: conventional-commits-linter
-conventional-commits-linter: ## Conventional Commits Linter
-	echo "conventional-commits-linter"
+.PHONY: clean-git
+git: clean-git-configs clean-git-hooks ## Clean Git Configs & Hooks
 
-.PHONY: coverage
-coverage: ## Coverage
-	go test ./... -covermode=atomic -coverprofile=./coverage/coverage.out
-	go tool cover -html=./coverage/coverage.out -o=./coverage/coverage.html
-
-.PHONY: deny-check
-deny-check: ## Deny Check
-	echo "deny-check"
-
-.PHONY: fmt-check
-fmt-check: ## FMT Check
-	go fmt .
-
-.PHONY: git
+.PHONY: add-git
 git: add-git-configs add-git-hooks ## Add Git Configs & Hooks
 
 .PHONY: help
@@ -82,6 +60,33 @@ help: ## Help
 		| sort \
 		| awk 'BEGIN { FS = ":.*?## " }; { printf "\033[36m%-33s\033[0m %s\n", $$1, $$2 }'
 
+# LANGUAGE SPECIFICS
+
+.PHONY: coverage
+coverage: test ## Coverage
+	go tool cover -html=./coverage/coverage.out -o=./coverage/coverage.html
+
+.PHONY: coverage-ci
+coverage-ci: ## Coverage CI
+	go tool cover -html=./coverage/coverage.out -o=./coverage/coverage.html
+
+.PHONY: doc
+doc: ## Documentation
+	go doc -all ./util
+
+.PHONY: fix
+fix: ## Format
+	go fix ./...
+
+.PHONY: format
+fmt: ## Format
+	go fmt ./...
+
+.PHONY: static-analysis
+static-analysis: ## Static Analysis
+	go install golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow@latest
+	go vet -vettool=$(HOME)/go/bin/shadow ./...
+
 .PHONY: test
 test: ## Test
-	go test
+	go test ./... -covermode=set -coverprofile=./coverage/coverage.out -timeout=30s
