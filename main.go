@@ -16,7 +16,9 @@ import (
 )
 
 func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, initializer runtime.Initializer) error {
-	u.NewConfig(ctx, logger)
+	if err := u.NewConfig(ctx, logger); err != nil {
+		return err
+	}
 
 	u.NewOpenTelemetry(ctx, logger)
 	// shutdown := u.NewOpenTelemetry(ctx, logger)

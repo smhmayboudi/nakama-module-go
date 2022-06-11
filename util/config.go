@@ -15,14 +15,17 @@ type Config struct {
 	ServiceName         string `default:"nakama-modules-go" envconfig:"SERVICE_NAME" json:"service_name,omitempty" protobuf:"bytes,5,opt,name=service_name,json=service_name,proto3" required:"true" split_words:"true"`
 	ServiceNamespace    string `default:"nakama" envconfig:"SERVICE_NAMESPACE" json:"service_namespace,omitempty" protobuf:"bytes,6,opt,name=service_namespace,json=service_namespace,proto3" required:"true" split_words:"true"`
 	ServiceVersion      string `default:"v0.1.0" envconfig:"SERVICE_VERSION" json:"service_version,omitempty" protobuf:"bytes,7,opt,name=service_version,json=service_version,proto3" required:"true" split_words:"true"`
+	Test                bool   `default:"false" envconfig:"TEST" json:"-" protobuf:"bytes,8,opt,name=test,json=test,proto3" required:"true" split_words:"true"`
 }
 
 var ModuleConfig Config
 
-func NewConfig(ctx context.Context, logger runtime.Logger) {
+func NewConfig(ctx context.Context, logger runtime.Logger) error {
 	nakamaContext := NewContext(ctx, logger)
 	fields := map[string]interface{}{"name": "NewConfig", "ctx": nakamaContext}
 	if err := envconfig.Process("", &ModuleConfig); err != nil {
 		logger.WithFields(fields).WithField("error", err).Error("Failed to process environment variables")
+		return err
 	}
+	return nil
 }

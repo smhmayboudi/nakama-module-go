@@ -20,7 +20,7 @@ services:
       start_period: 5s
       test: curl -f http://cockroach:8080/health
       timeout: 5s
-    image: cockroachdb/cockroach:v22.1.0
+    image: cockroachdb/cockroach:v22.1.1
     labels:
       namespace: cockroach
     ports:
@@ -208,7 +208,7 @@ services:
     #   start_period: 5s
     #   test: curl -f http://otelcol:13133
     #   timeout: 5s
-    image: otel/opentelemetry-collector:0.52.0
+    image: otel/opentelemetry-collector:0.53.0
     labels:
       namespace: otelcol
     ports:
@@ -240,7 +240,7 @@ services:
       start_period: 5s
       test: wget --no-verbose --spider --tries=1 http://pgadmin4:5050
       timeout: 5s
-    image: dpage/pgadmin4:6.9
+    image: dpage/pgadmin4:6.10
     labels:
       namespace: pgadmin4
     ports:

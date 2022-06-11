@@ -2,6 +2,7 @@ package util
 
 import (
 	"context"
+	"os"
 	"reflect"
 	"testing"
 
@@ -14,9 +15,11 @@ func TestNewConfig(t *testing.T) {
 		logger runtime.Logger
 	}
 	tests := []struct {
-		name string
-		args args
-		want *Config
+		name    string
+		args    args
+		want    *Config
+		wantErr bool
+		init    func()
 	}{
 		{
 			name: "NewConfig",
@@ -32,16 +35,47 @@ func TestNewConfig(t *testing.T) {
 				ServiceName:         "nakama-modules-go",
 				ServiceNamespace:    "nakama",
 				ServiceVersion:      "v0.1.0",
+				Test:                true,
+			},
+			wantErr: false,
+			init: func() {
+				os.Setenv("TEST", "true")
+				ModuleConfig = Config{}
+			},
+		},
+		{
+			name: "NewConfigWithError",
+			args: args{
+				ctx:    context.Background(),
+				logger: &TestLogger{},
+			},
+			want: &Config{
+				InstrumentationName: "nakama-modules-go",
+				JaegerURL:           "http://otelcol:14268/api/traces",
+				RedpandaURL:         "http://redpanda:8082/topics/nakama",
+				ServiceInstanceId:   "00000000-0000-0000-0000-000000000000",
+				ServiceName:         "nakama-modules-go",
+				ServiceNamespace:    "nakama",
+				ServiceVersion:      "v0.1.0",
+				Test:                true,
+			},
+			wantErr: true,
+			init: func() {
+				os.Setenv("TEST", "")
+				ModuleConfig = Config{}
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			tt.init()
 			config := Config{}
 			if appConfig := ModuleConfig; !reflect.DeepEqual(appConfig, config) {
 				t.Errorf("AppConfig = %v, want %v", appConfig, config)
 			}
-			NewConfig(tt.args.ctx, tt.args.logger)
+			if err := NewConfig(tt.args.ctx, tt.args.logger); (err != nil) != tt.wantErr {
+				t.Errorf("AppConfig error = %v, wantErr %v", err, tt.wantErr)
+			}
 			if instrumentationName := ModuleConfig.InstrumentationName; !reflect.DeepEqual(instrumentationName, tt.want.InstrumentationName) {
 				t.Errorf("AppConfig = %v, want %v", instrumentationName, tt.want.InstrumentationName)
 			}

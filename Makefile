@@ -49,10 +49,10 @@ clean-git-hooks: ## Clean Git Hooks
 add-git-hooks: clean-git-hooks $(GIT_HOOKS) ## Add Git Hooks
 
 .PHONY: clean-git
-git: clean-git-configs clean-git-hooks ## Clean Git Configs & Hooks
+clean-git: clean-git-configs clean-git-hooks ## Clean Git Configs & Hooks
 
 .PHONY: add-git
-git: add-git-configs add-git-hooks ## Add Git Configs & Hooks
+add-git: add-git-configs add-git-hooks ## Add Git Configs & Hooks
 
 .PHONY: help
 help: ## Help

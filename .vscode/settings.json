@@ -1,8 +1,6 @@
 {
   "editor.inlineSuggest.enabled": true,
   "editor.tabSize": 2,
-  // go.coverMode
-  // go.call graph feature 
   "go.coverOnSave": true,
   "go.coverageDecorator": {
     "coveredBorderColor": "rgba(64,128,128,0.5)",
